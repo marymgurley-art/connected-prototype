@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dino Discovery Book</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse at center,#4a2f1a,#2a1508);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;font-family:'Nunito',sans-serif}
+.book-title{font-family:'Fredoka One',cursive;color:#f4d03f;font-size:20px;letter-spacing:3px;text-shadow:2px 2px 8px rgba(0,0,0,.6);margin-bottom:12px}
+
+/* BOOK */
+.book{display:flex;width:min(960px,98vw);height:min(610px,85vh);border-radius:6px 18px 18px 6px;box-shadow:0 0 0 3px #1a0a02,0 24px 70px rgba(0,0,0,.7)}
+.spine{width:26px;background:linear-gradient(to right,#150801,#4a2f1a 30%,#6b4020 50%,#4a2f1a 70%,#150801);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.spine span{font-family:'Fredoka One',cursive;color:#c8a84b;font-size:8px;letter-spacing:3px;writing-mode:vertical-rl}
+
+/* PAGES */
+.page{flex:1;background:#fdf6e8;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.page-left{border-radius:6px 0 0 6px}
+.page-right{border-radius:0 18px 18px 0;border-left:1px solid #e2d0b0}
+
+/* ILLUSTRATION */
+.illustration{width:100%;height:230px;position:relative;overflow:hidden;flex-shrink:0}
+.scene{width:100%;height:100%;position:relative;display:flex;align-items:flex-end;justify-content:center}
+.scene svg{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:210px}
+.scene-env{position:absolute;inset:0}
+
+/* LEFT PAGE CONTENT */
+.left-content{padding:14px 22px 8px;flex:1;display:flex;flex-direction:column;overflow:hidden}
+.dino-name{font-family:'Fredoka One',cursive;font-size:28px;color:#2d1a0a;line-height:1}
+.dino-say{font-size:11px;color:#aaa;font-style:italic;margin:2px 0 10px}
+.dino-para{font-size:13px;line-height:1.6;color:#3a2a1a;flex:1;overflow:hidden}
+
+/* PAGE FOOTER */
+.page-foot{display:flex;align-items:center;justify-content:space-between;padding:7px 16px;border-top:1px solid #e2d0b0;flex-shrink:0}
+.pg-num{font-size:11px;color:#ccc;font-style:italic}
+.btn{padding:7px 16px;border:none;border-radius:20px;font-family:'Fredoka One',cursive;font-size:13px;cursor:pointer;transition:all .1s}
+.btn-sound{background:#c0392b;color:#fff;box-shadow:0 3px 0 #922b21}.btn-sound:active{transform:translateY(3px);box-shadow:none}
+.btn-nav{background:none;border:2px solid #d4b896;color:#8b6343;font-size:13px;padding:5px 13px;border-radius:20px;cursor:pointer;font-family:'Fredoka One',cursive}
+.btn-nav:hover{background:#d4b896;color:#3d2010}.btn-nav:disabled{opacity:.3;cursor:default}
+
+/* RIGHT PAGE CONTENT */
+.right-content{padding:14px 18px 8px;flex:1;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+
+/* EGG */
+.egg-row{display:flex;gap:14px;align-items:flex-start;flex-shrink:0}
+.egg-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.egg{width:54px;height:66px;background:radial-gradient(ellipse at 35% 30%,#fff8d0,#e8c820,#b8960a);border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;box-shadow:2px 4px 12px rgba(0,0,0,.2);transition:transform .1s;user-select:none}
+.egg:hover{transform:scale(1.1) rotate(6deg)}.egg:active{transform:scale(.9)}
+.egg-hint{font-size:9px;color:#bbb;font-weight:800}
+.facts-col{flex:1}
+.facts-lbl{font-family:'Fredoka One',cursive;font-size:13px;color:#2d6a1f;margin-bottom:5px}
+.fact{padding:6px 10px;background:#fff;border-radius:9px;margin-bottom:6px;font-size:11.5px;font-weight:700;color:#2d2d2d;opacity:0;transform:translateX(14px);transition:all .35s ease;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:3px solid #e6920a}
+.fact.show{opacity:1;transform:translateX(0)}
+
+/* GAME BOX */
+.game-box{flex:1;border:2px dashed #d4b896;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.game-head{background:#2d6a1f;color:#fff;font-family:'Fredoka One',cursive;font-size:13px;padding:5px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.game-reset{background:rgba(255,255,255,.2);border:none;color:#fff;padding:2px 9px;border-radius:8px;font-size:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700}
+.game-body{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:#fff}
+
+/* ---- FOSSIL DIG ---- */
+.dig-wrap{position:relative;width:100%;height:100%}
+.dig-bones{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1}
+.bones-svg{width:80%;height:80%}
+.dig-canvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;z-index:2}
+.dig-pct{position:absolute;top:5px;right:8px;font-size:10px;font-weight:800;color:#fff;text-shadow:1px 1px 4px rgba(0,0,0,.9);z-index:3;pointer-events:none}
+
+/* ---- MATCHING ---- */
+.match-wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-around;padding:8px;gap:6px}
+.match-lbl{font-size:10px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:1px}
+.match-row{display:flex;gap:8px}
+.mcard{width:78px;height:62px;border:3px solid #e0d0b8;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:#fdf6e8;transition:all .18s;user-select:none}
+.mcard .ico{font-size:26px;line-height:1}
+.mcard .lbl{font-size:9px;font-weight:800;color:#888;margin-top:2px}
+.mcard:hover:not(.done):not(.locked){border-color:#2d6a1f;transform:scale(1.05)}
+.mcard.sel{border-color:#e6920a;background:#fff8e0;transform:scale(1.08);box-shadow:0 0 0 3px rgba(230,146,10,.3)}
+.mcard.done{border-color:#2d6a1f;background:#e8f5e0;cursor:default}
+.mcard.bad{border-color:#c0392b;animation:shake .4s}
+.match-hint{font-size:10px;color:#bbb;font-weight:700}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* ---- PUZZLE ---- */
+.puzzle-wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:8px}
+.puzzle-hint{font-size:10px;color:#888;font-weight:700}
+.puzzle-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:4px;width:220px;height:110px}
+.p-slot{border:2px dashed #d4b896;border-radius:6px;background:#f5ecd8;display:flex;align-items:center;justify-content:center;font-size:11px;color:#ccc;font-weight:800;transition:all .2s;cursor:pointer}
+.p-slot.correct{border:2px solid #2d6a1f;background:#e8f5e0}
+.p-slot.highlight{border-color:#e6920a;background:#fff8e0}
+.puzzle-tray{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;padding:6px 10px;background:#f0e8d8;border-radius:10px;width:230px}
+.p-piece{width:44px;height:40px;border:2px solid #c8a878;border-radius:7px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:all .18s;user-select:none}
+.p-piece:hover:not(.used){border-color:#2d6a1f;transform:scale(1.08)}
+.p-piece.sel{border-color:#e6920a;background:#fff8e0;transform:scale(1.1);box-shadow:0 0 0 2px rgba(230,146,10,.4)}
+.p-piece.used{opacity:.25;cursor:default}
+
+/* CELEBRATION */
+.party{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#e6920a;color:#fff;font-family:'Fredoka One',cursive;font-size:28px;padding:18px 36px;border-radius:20px;z-index:999;opacity:0;pointer-events:none;transition:opacity .3s;box-shadow:0 10px 40px rgba(0,0,0,.4);text-align:center}
+.party.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="book-title">📖 DINO DISCOVERY BOOK</div>
+
+<div class="book">
+  <!-- LEFT PAGE -->
+  <div class="page page-left">
+    <div class="illustration" id="illus"></div>
+    <div class="left-content">
+      <div class="dino-name" id="dName"></div>
+      <div class="dino-say" id="dSay"></div>
+      <div class="dino-para" id="dPara"></div>
+    </div>
+    <div class="page-foot">
+      <button class="btn-nav" id="prevBtn" onclick="go(-1)">← Back</button>
+      <span class="pg-num" id="pgL"></span>
+      <button class="btn btn-sound" onclick="snd(dinos[cur].sound)">🔊 Hear it!</button>
+      <button class="btn-nav" id="nextBtn" onclick="go(1)">Next →</button>
+    </div>
+  </div>
+
+  <div class="spine"><span>DINO BOOK</span></div>
+
+  <!-- RIGHT PAGE -->
+  <div class="page page-right">
+    <div class="right-content">
+      <div class="egg-row">
+        <div class="egg-wrap">
+          <div class="egg" id="egg" onclick="tapEgg()">🥚</div>
+          <div class="egg-hint">TAP ME!</div>
+        </div>
+        <div class="facts-col">
+          <div class="facts-lbl">🔍 Crack the egg for facts!</div>
+          <div id="factList"></div>
+        </div>
+      </div>
+      <div class="game-box">
+        <div class="game-head">
+          <span id="gameTitle">🎮 Game</span>
+          <button class="game-reset" onclick="resetGame()">↺ Try Again</button>
+        </div>
+        <div class="game-body" id="gameBody"></div>
+      </div>
+    </div>
+    <div class="page-foot">
+      <span></span>
+      <span class="pg-num" id="pgR"></span>
+      <span></span>
+    </div>
+  </div>
+</div>
+
+<div class="party" id="party"></div>
+
+<script>
+// ─── DINO DATA ───────────────────────────────────────────────────────────────
+const dinos = [
+  {
+    name:"Pachycephalosaurus",
+    say:"pak-ee-SEF-ah-lo-SORE-us",
+    para:"Pachycephalosaurus had a skull 10 inches thick — like wearing a bowling ball for a helmet! Scientists think they charged at each other and BONKED heads, just like rams do today. That dome took millions of years to grow that tough! 💥",
+    facts:["🌟 Its name means 'thick-headed lizard'!","🌟 It was about the size of a large dog!","🌟 Its dome had little spiky bumps around the edge!"],
+    sound:"bonk",
+    game:"fossil",
+    gameTitle:"🦴 Fossil Dig — find the skull!",
+    boneColor:"#c8a050",
+    scene: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body -->
+      <ellipse cx="165" cy="130" rx="65" ry="38" fill="#8B5E3C"/>
+      <!-- Neck -->
+      <ellipse cx="105" cy="112" rx="20" ry="28" fill="#8B5E3C"/>
+      <!-- Dome head -->
+      <ellipse cx="82" cy="92" rx="26" ry="22" fill="#7A5230"/>
+      <ellipse cx="82" cy="78" rx="18" ry="14" fill="#A06B40"/>
+      <!-- Eye -->
+      <circle cx="72" cy="88" r="5" fill="white"/><circle cx="73" cy="88" r="3" fill="#1a0a00"/>
+      <!-- Jaw -->
+      <path d="M58 98 Q72 105 80 98" stroke="#5a3520" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Tail -->
+      <path d="M226 122 Q272 108 280 128 Q268 142 222 138Z" fill="#8B5E3C"/>
+      <!-- Back leg -->
+      <rect x="148" y="162" width="20" height="38" rx="8" fill="#7A5230"/>
+      <!-- Front leg -->
+      <rect x="106" y="150" width="18" height="32" rx="8" fill="#7A5230"/>
+      <!-- Arm -->
+      <ellipse cx="120" cy="123" rx="10" ry="6" fill="#7A5230" transform="rotate(-25 120 123)"/>
+      <!-- Back bumps -->
+      <ellipse cx="148" cy="91" rx="5" ry="9" fill="#A06B40" transform="rotate(-12 148 91)"/>
+      <ellipse cx="166" cy="88" rx="5" ry="9" fill="#A06B40" transform="rotate(-5 166 88)"/>
+      <ellipse cx="184" cy="88" rx="5" ry="9" fill="#A06B40" transform="rotate(5 184 88)"/>
+      <ellipse cx="200" cy="93" rx="5" ry="8" fill="#A06B40" transform="rotate(12 200 93)"/>
+      <!-- Ground shadow -->
+      <ellipse cx="160" cy="195" rx="100" ry="10" fill="rgba(0,0,0,.15)"/>
+    </svg>`,
+    skyA:"#87CEEB",skyB:"#c8e8f5",ground:"linear-gradient(#8B6914,#6b4a10)",plants:"🌾🌿🌾"
+  },
+  {
+    name:"Zuul",
+    say:"ZOOL (like Ghostbusters!)",
+    para:"Zuul was named after the Ghostbusters monster 👻 because its face was so fierce! Covered head-to-toe in bony armor, it had a massive club at the end of its tail that could break another dinosaur's bones in one swing!",
+    facts:["🌟 Full name means 'destroyer of shins'!","🌟 Found almost perfectly preserved in Montana!","🌟 Its armor was fused into its skin!"],
+    sound:"thwack",
+    game:"matching",
+    gameTitle:"🥚 Match baby to mama!",
+    pairs:[
+      {baby:"🐣",bname:"Baby Zuul",mama:"🛡️",mname:"Mama Zuul",id:0},
+      {baby:"🐤",bname:"Baby Brachio",mama:"🦕",mname:"Mama Brachio",id:1},
+      {baby:"🐥",bname:"Baby Raptor",mama:"🦖",mname:"Mama Raptor",id:2}
+    ],
+    scene:`<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body - low and wide -->
+      <ellipse cx="155" cy="148" rx="80" ry="34" fill="#4a6b40"/>
+      <!-- Head -->
+      <ellipse cx="68" cy="145" rx="32" ry="20" fill="#3d5c35"/>
+      <!-- Horn/spikes on head -->
+      <polygon points="58,128 64,118 70,128" fill="#2d4428"/>
+      <polygon points="72,125 78,114 84,125" fill="#2d4428"/>
+      <!-- Eye -->
+      <circle cx="58" cy="143" r="5" fill="white"/><circle cx="59" cy="143" r="3" fill="#0a1a08"/>
+      <!-- Armor plates on back -->
+      <ellipse cx="120" cy="116" rx="10" ry="12" fill="#3d5c35"/>
+      <ellipse cx="143" cy="112" rx="10" ry="13" fill="#3d5c35"/>
+      <ellipse cx="166" cy="112" rx="10" ry="13" fill="#3d5c35"/>
+      <ellipse cx="189" cy="114" rx="10" ry="12" fill="#3d5c35"/>
+      <ellipse cx="210" cy="118" rx="9" ry="10" fill="#3d5c35"/>
+      <!-- Studs on sides -->
+      <circle cx="110" cy="148" r="5" fill="#2d4428"/>
+      <circle cx="130" cy="152" r="5" fill="#2d4428"/>
+      <circle cx="150" cy="154" r="5" fill="#2d4428"/>
+      <circle cx="170" cy="154" r="5" fill="#2d4428"/>
+      <circle cx="190" cy="152" r="5" fill="#2d4428"/>
+      <!-- Legs -->
+      <rect x="100" y="176" width="18" height="22" rx="6" fill="#3d5c35"/>
+      <rect x="130" y="178" width="18" height="20" rx="6" fill="#3d5c35"/>
+      <rect x="170" y="178" width="18" height="20" rx="6" fill="#3d5c35"/>
+      <rect x="200" y="176" width="18" height="22" rx="6" fill="#3d5c35"/>
+      <!-- CLUB TAIL -->
+      <path d="M230 148 Q260 138 272 148 Q260 158 230 158Z" fill="#3d5c35"/>
+      <ellipse cx="274" cy="149" rx="14" ry="12" fill="#2d4428"/>
+      <ellipse cx="274" cy="149" rx="9" ry="7" fill="#4a6b40"/>
+      <!-- Ground shadow -->
+      <ellipse cx="160" cy="197" rx="110" ry="8" fill="rgba(0,0,0,.15)"/>
+    </svg>`,
+    skyA:"#9b7ea6",skyB:"#c5a3d0",ground:"linear-gradient(#3a2a18,#2d1e10)",plants:"🌵🪨🌵"
+  },
+  {
+    name:"Nigersaurus",
+    say:"NEE-zher-SORE-us",
+    para:"Nigersaurus had a mouth shaped like a vacuum cleaner! 🧹 It had over 500 tiny teeth arranged in rows at the very front of its wide, flat snout. It mowed through ferns and low plants like a living lawnmower — and grew new teeth every two weeks!",
+    facts:["🌟 Over 500 teeth — grown in rows like a conveyor belt!","🌟 Its skull was nearly see-through it was so thin!","🌟 Found in the Sahara Desert in Niger, Africa!"],
+    sound:"munch",
+    game:"puzzle",
+    gameTitle:"🧩 Put the dino together!",
+    pieces:[
+      {e:"🦕",label:"HEAD",slot:0},{e:"🌿",label:"NECK",slot:1},{e:"🦴",label:"BODY",slot:2},
+      {e:"🥚",label:"BACK",slot:3},{e:"🐾",label:"LEGS",slot:4},{e:"⭐",label:"TAIL",slot:5},
+      {e:"🌺",label:"PLANTS",slot:6},{e:"🪨",label:"ROCKS",slot:7}
+    ],
+    scene:`<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body -->
+      <ellipse cx="175" cy="148" rx="75" ry="32" fill="#6b8c4a"/>
+      <!-- Long neck -->
+      <path d="M110 130 Q85 80 78 45 Q90 42 100 45 Q108 80 130 130Z" fill="#6b8c4a"/>
+      <!-- Wide flat head (key Nigersaurus feature) -->
+      <rect x="52" y="32" width="62" height="22" rx="8" fill="#5a7a3a"/>
+      <!-- Nostrils -->
+      <circle cx="68" cy="40" r="3" fill="#4a6a2a"/><circle cx="98" cy="40" r="3" fill="#4a6a2a"/>
+      <!-- Many tiny teeth at front of mouth -->
+      <rect x="55" y="52" width="56" height="5" rx="2" fill="#e8d8b0"/>
+      <line x1="62" y1="52" x2="62" y2="57" stroke="#8B7355" stroke-width="1"/>
+      <line x1="69" y1="52" x2="69" y2="57" stroke="#8B7355" stroke-width="1"/>
+      <line x1="76" y1="52" x2="76" y2="57" stroke="#8B7355" stroke-width="1"/>
+      <line x1="83" y1="52" x2="83" y2="57" stroke="#8B7355" stroke-width="1"/>
+      <line x1="90" y1="52" x2="90" y2="57" stroke="#8B7355" stroke-width="1"/>
+      <line x1="97" y1="52" x2="97" y2="57" stroke="#8B7355" stroke-width="1"/>
+      <line x1="104" y1="52" x2="104" y2="57" stroke="#8B7355" stroke-width="1"/>
+      <!-- Eye -->
+      <circle cx="73" cy="38" r="4" fill="white"/><circle cx="74" cy="38" r="2.5" fill="#1a2a0a"/>
+      <!-- Legs -->
+      <rect x="128" y="174" width="20" height="24" rx="7" fill="#5a7a3a"/>
+      <rect x="158" y="176" width="20" height="22" rx="7" fill="#5a7a3a"/>
+      <rect x="192" y="176" width="20" height="22" rx="7" fill="#5a7a3a"/>
+      <rect x="220" y="174" width="20" height="24" rx="7" fill="#5a7a3a"/>
+      <!-- Tail -->
+      <path d="M246 140 Q272 128 280 144 Q268 158 244 156Z" fill="#6b8c4a"/>
+      <!-- Ground shadow -->
+      <ellipse cx="175" cy="197" rx="105" ry="8" fill="rgba(0,0,0,.15)"/>
+    </svg>`,
+    skyA:"#f4c842",skyB:"#e8a820",ground:"linear-gradient(#c8962a,#a07020)",plants:"🌴🌿🌴"
+  },
+  {
+    name:"Maiasaura",
+    say:"my-ah-SORE-ah",
+    para:"Maiasaura was one of the greatest dinosaur parents ever! 🏆 It built nests, kept eggs warm, and fed its babies until they could walk and join the herd. Scientists found a whole nesting ground with thousands of Maiasaura — like a giant dinosaur neighborhood!",
+    facts:["🌟 Its name means 'good mother lizard'!","🌟 Babies were about the size of a rabbit!","🌟 They traveled in herds of thousands for safety!"],
+    sound:"coo",
+    game:"matching",
+    gameTitle:"🥚 Match baby to mama!",
+    pairs:[
+      {baby:"🐣",bname:"Baby Maiai",mama:"🦕",mname:"Mama Maiai",id:0},
+      {baby:"🐤",bname:"Baby Ankylo",mama:"🛡️",mname:"Mama Ankylo",id:1},
+      {baby:"🐥",bname:"Baby Stego",mama:"🦖",mname:"Mama Stego",id:2}
+    ],
+    scene:`<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Eggs in nest (background detail) -->
+      <ellipse cx="250" cy="172" rx="30" ry="14" fill="#8B6914" opacity=".5"/>
+      <ellipse cx="242" cy="166" rx="10" ry="12" fill="#d4b896"/>
+      <ellipse cx="256" cy="164" rx="10" ry="12" fill="#c8a878"/>
+      <ellipse cx="250" cy="168" rx="9" ry="11" fill="#d4b896"/>
+      <!-- Body -->
+      <ellipse cx="145" cy="135" rx="70" ry="42" fill="#b05a30"/>
+      <!-- Neck -->
+      <ellipse cx="82" cy="108" rx="22" ry="32" fill="#b05a30"/>
+      <!-- Duck-bill head (hadrosaur) -->
+      <ellipse cx="56" cy="85" rx="30" ry="20" fill="#9a4a22"/>
+      <!-- Flat bill -->
+      <ellipse cx="38" cy="90" rx="22" ry="10" fill="#8a3a18"/>
+      <!-- Eye -->
+      <circle cx="52" cy="80" r="5" fill="white"/><circle cx="53" cy="80" r="3" fill="#1a0800"/>
+      <!-- Nostril -->
+      <ellipse cx="40" cy="83" rx="3" ry="2" fill="#7a3010"/>
+      <!-- Back legs (large, hadrosaur) -->
+      <rect x="130" y="170" width="26" height="30" rx="10" fill="#9a4a22"/>
+      <rect x="168" y="170" width="26" height="30" rx="10" fill="#9a4a22"/>
+      <!-- Front arms (smaller) -->
+      <rect x="92" y="148" width="16" height="22" rx="7" fill="#9a4a22"/>
+      <rect x="116" y="152" width="16" height="18" rx="7" fill="#9a4a22"/>
+      <!-- Tail -->
+      <path d="M210 130 Q255 115 265 132 Q252 148 208 146Z" fill="#b05a30"/>
+      <!-- Subtle back stripe -->
+      <path d="M82 76 Q120 62 180 68 Q220 72 240 88" stroke="#c87040" stroke-width="4" fill="none" stroke-linecap="round" opacity=".6"/>
+      <!-- Ground shadow -->
+      <ellipse cx="160" cy="197" rx="110" ry="8" fill="rgba(0,0,0,.15)"/>
+    </svg>`,
+    skyA:"#ff9a6c",skyB:"#ffcc80",ground:"linear-gradient(#5d8a3c,#3d6020)",plants:"🌸🌺🌸"
+  }
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let cur=0, factsShown=0;
+
+// ─── RENDER PAGE ──────────────────────────────────────────────────────────────
+function render(i){
+  cur=i; factsShown=0;
+  const d=dinos[i];
+
+  // Illustration
+  document.getElementById('illus').innerHTML=`
+    <div class="scene">
+      <div class="scene-env" style="background:linear-gradient(180deg,${d.skyA} 0%,${d.skyB} 62%,transparent 62%)"></div>
+      <div class="scene-env" style="top:62%;background:${d.ground}"></div>
+      ${d.scene}
+    </div>`;
+
+  document.getElementById('dName').textContent=d.name;
+  document.getElementById('dSay').textContent='Say it: '+d.say;
+  document.getElementById('dPara').textContent=d.para;
+
+  const p=i*2+1;
+  document.getElementById('pgL').textContent='Page '+p;
+  document.getElementById('pgR').textContent='Page '+(p+1);
+  document.getElementById('prevBtn').disabled=i===0;
+  document.getElementById('nextBtn').disabled=i===dinos.length-1;
+
+  document.getElementById('egg').textContent='🥚';
+  document.getElementById('factList').innerHTML=d.facts.map((f,j)=>
+    `<div class="fact" id="f${j}">${f}</div>`).join('');
+
+  document.getElementById('gameTitle').textContent=d.gameTitle;
+  buildGame(d);
+}
+
+function go(dir){const n=cur+dir;if(n>=0&&n<dinos.length)render(n);}
+
+// ─── EGG ─────────────────────────────────────────────────────────────────────
+function tapEgg(){
+  const d=dinos[cur];
+  if(factsShown>=d.facts.length)return;
+  document.getElementById('f'+factsShown).classList.add('show');
+  factsShown++;
+  const egg=document.getElementById('egg');
+  if(factsShown===1)egg.textContent='🪺';
+  else if(factsShown===2)egg.textContent='🐣';
+  else{egg.textContent='🦕';party('🎉 All facts discovered! You\'re a dino expert! 🦕');}
+}
+
+// ─── PARTY ───────────────────────────────────────────────────────────────────
+function party(msg){
+  const el=document.getElementById('party');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ─── SOUND ───────────────────────────────────────────────────────────────────
+let AC;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC;}
+function snd(type){
+  const ctx=getAC(),t=ctx.currentTime;
+  if(type==='bonk'){
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.setValueAtTime(300,t);o.frequency.exponentialRampToValueAtTime(60,t+.4);
+    g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.5);
+    o.start(t);o.stop(t+.5);
+  }
+  if(type==='thwack'){
+    const buf=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.3),ctx.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
+    const s=ctx.createBufferSource(),g=ctx.createGain(),f=ctx.createBiquadFilter();
+    f.type='lowpass';f.frequency.value=300;s.buffer=buf;
+    s.connect(f);f.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(2,t);s.start(t);
+  }
+  if(type==='munch'){
+    for(let i=0;i<4;i++){const o=ctx.createOscillator(),g=ctx.createGain();o.type='sawtooth';o.frequency.value=100+Math.random()*40;o.connect(g);g.connect(ctx.destination);const q=t+i*.18;g.gain.setValueAtTime(.5,q);g.gain.exponentialRampToValueAtTime(.001,q+.15);o.start(q);o.stop(q+.16);}
+  }
+  if(type==='coo'){
+    [440,494,523,440].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(ctx.destination);const q=t+i*.14;g.gain.setValueAtTime(.3,q);g.gain.exponentialRampToValueAtTime(.001,q+.12);o.start(q);o.stop(q+.13);});
+  }
+  if(type==='ding'){
+    const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=880;o.connect(g);g.connect(ctx.destination);g.gain.setValueAtTime(.4,t);g.gain.exponentialRampToValueAtTime(.001,t+.6);o.start(t);o.stop(t+.6);
+  }
+}
+
+// ─── GAME ROUTER ─────────────────────────────────────────────────────────────
+function buildGame(d){
+  if(d.game==='fossil')buildFossil(d);
+  else if(d.game==='matching')buildMatching(d);
+  else if(d.game==='puzzle')buildPuzzle(d);
+}
+function resetGame(){buildGame(dinos[cur]);}
+
+// ─── FOSSIL DIG ───────────────────────────────────────────────────────────────
+let digging=false;
+function buildFossil(d){
+  digging=false;
+  document.getElementById('gameBody').innerHTML=`
+    <div class="dig-wrap" id="dw">
+      <div class="dig-bones">
+        <svg class="bones-svg" viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+          <!-- Dome skull -->
+          <ellipse cx="60" cy="60" rx="38" ry="32" fill="${d.boneColor}" opacity=".9"/>
+          <ellipse cx="60" cy="48" rx="24" ry="18" fill="#e8d080"/>
+          <!-- Jaw -->
+          <rect x="32" y="78" width="50" height="14" rx="5" fill="${d.boneColor}"/>
+          <!-- Teeth -->
+          <rect x="38" y="88" width="6" height="9" rx="2" fill="#f0e8c0"/>
+          <rect x="49" y="88" width="6" height="9" rx="2" fill="#f0e8c0"/>
+          <rect x="60" y="88" width="6" height="9" rx="2" fill="#f0e8c0"/>
+          <!-- Spine -->
+          <path d="M98 70 Q160 55 220 65" stroke="${d.boneColor}" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <!-- Ribs -->
+          <path d="M120 72 Q118 98 112 112" stroke="${d.boneColor}" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M140 68 Q140 95 134 110" stroke="${d.boneColor}" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M160 66 Q162 92 157 107" stroke="${d.boneColor}" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M180 67 Q184 90 181 105" stroke="${d.boneColor}" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <!-- Leg bones -->
+          <rect x="126" y="112" width="12" height="26" rx="5" fill="${d.boneColor}"/>
+          <rect x="154" y="112" width="12" height="26" rx="5" fill="${d.boneColor}"/>
+          <!-- Dome label -->
+          <text x="60" y="125" text-anchor="middle" font-size="11" font-weight="bold" fill="#8B6914" opacity=".8">DOME SKULL</text>
+        </svg>
+      </div>
+      <canvas class="dig-canvas" id="dc"></canvas>
+      <div class="dig-pct" id="dpct">🪣 Dig! 0% uncovered</div>
+    </div>`;
+
+  const canvas=document.getElementById('dc');
+  const dw=document.getElementById('dw');
+  canvas.width=dw.offsetWidth||340;
+  canvas.height=dw.offsetHeight||150;
+  const ctx=canvas.getContext('2d');
+
+  // Draw rich dirt
+  ctx.fillStyle='#7a4e2a';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  for(let i=0;i<400;i++){
+    const x=Math.random()*canvas.width,y=Math.random()*canvas.height,r=Math.random()*9+2;
+    ctx.fillStyle=Math.random()>.5?'rgba(50,25,5,.35)':'rgba(160,100,50,.3)';
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  }
+  for(let i=0;i<25;i++){
+    const x=Math.random()*canvas.width,y=Math.random()*canvas.height;
+    ctx.fillStyle='rgba(60,40,20,.5)';
+    ctx.beginPath();ctx.ellipse(x,y,7,4,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();
+  }
+
+  const total=canvas.width*canvas.height;
+  let done=false;
+  let lastPct=0;
+
+  function dig(e){
+    if(!digging)return;
+    const r=canvas.getBoundingClientRect();
+    const sx=canvas.width/r.width,sy=canvas.height/r.height;
+    const x=(e.clientX-r.left)*sx,y=(e.clientY-r.top)*sy;
+    ctx.globalCompositeOperation='destination-out';
+    ctx.beginPath();ctx.arc(x,y,24,0,Math.PI*2);ctx.fill();
+    ctx.globalCompositeOperation='source-over';
+    // Sample ~every 3rd pixel for performance
+    const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+    let clear=0;
+    for(let p=3;p<img.data.length;p+=16)if(img.data[p]<128)clear++;
+    const pct=Math.min(100,Math.round(clear/(total/4)*100));
+    if(pct!==lastPct){lastPct=pct;document.getElementById('dpct').textContent=`🦴 ${pct}% uncovered!`;}
+    if(pct>=62&&!done){done=true;party('🦕 Amazing fossil find! You\'re a real paleontologist! 🎉');snd('ding');}
+  }
+
+  canvas.onmousedown=e=>{digging=true;dig(e);};
+  canvas.onmousemove=dig;
+  canvas.onmouseup=canvas.onmouseleave=()=>digging=false;
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();digging=true;dig(e.touches[0]);},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();dig(e.touches[0]);},{passive:false});
+  canvas.addEventListener('touchend',()=>digging=false);
+}
+
+// ─── MATCHING GAME ────────────────────────────────────────────────────────────
+let mState={type:null,idx:null}, mDone=new Set();
+
+function buildMatching(d){
+  mState={type:null,idx:null};mDone=new Set();
+  const pairs=d.pairs;
+  const sb=[...pairs].sort(()=>Math.random()-.5);
+  const sm=[...pairs].sort(()=>Math.random()-.5);
+
+  document.getElementById('gameBody').innerHTML=`
+    <div class="match-wrap">
+      <div class="match-lbl">👶 Babies — tap one!</div>
+      <div class="match-row">${sb.map(p=>`
+        <div class="mcard" id="b${p.id}" onclick="mClick('b',${p.id})">
+          <div class="ico">${p.baby}</div><div class="lbl">${p.bname}</div>
+        </div>`).join('')}</div>
+      <div class="match-lbl">🦕 Mamas — tap its mama!</div>
+      <div class="match-row">${sm.map(p=>`
+        <div class="mcard" id="m${p.id}" onclick="mClick('m',${p.id})">
+          <div class="ico">${p.mama}</div><div class="lbl">${p.mname}</div>
+        </div>`).join('')}</div>
+      <div class="match-hint">Match each baby to its mama!</div>
+    </div>`;
+}
+
+function mClick(side,id){
+  if(mDone.has(id))return;
+  if(!mState.type){
+    mState={type:side,idx:id};
+    document.getElementById(side+id).classList.add('sel');
+  } else if(mState.type===side){
+    document.getElementById(mState.type+mState.idx).classList.remove('sel');
+    mState={type:side,idx:id};
+    document.getElementById(side+id).classList.add('sel');
+  } else {
+    const prev=document.getElementById(mState.type+mState.idx);
+    const curr=document.getElementById(side+id);
+    prev.classList.remove('sel');
+    if(mState.idx===id){
+      // Match!
+      prev.classList.add('done');curr.classList.add('done');
+      mDone.add(id);snd('ding');
+      if(mDone.size===dinos[cur].pairs.length)party('🎉 You matched them all! Great job! 🦕');
+    } else {
+      curr.classList.add('bad');
+      setTimeout(()=>curr.classList.remove('bad'),500);
+    }
+    mState={type:null,idx:null};
+  }
+}
+
+// ─── PUZZLE GAME ─────────────────────────────────────────────────────────────
+let pSel=null, pPlaced={};
+
+function buildPuzzle(d){
+  pSel=null;pPlaced={};
+  const pieces=d.pieces;
+  const shuffled=[...pieces].sort(()=>Math.random()-.5);
+  const COLS=4,ROWS=2;
+  const N=pieces.length; // 8
+
+  document.getElementById('gameBody').innerHTML=`
+    <div class="puzzle-wrap">
+      <div class="puzzle-hint">Tap a piece from the tray, then tap the matching slot!</div>
+      <div class="puzzle-grid" id="pgrid">
+        ${pieces.map((p,i)=>`
+          <div class="p-slot" id="ps${i}" data-slot="${i}" onclick="slotClick(${i})">
+            <span style="font-size:9px;color:#ccc;font-weight:800">${p.label}</span>
+          </div>`).join('')}
+      </div>
+      <div class="puzzle-tray" id="ptray">
+        ${shuffled.map((p,i)=>`
+          <div class="p-piece" id="pp${i}" data-label="${p.label}" data-slot="${pieces.indexOf(p)}" onclick="pieceClick(${i})">${p.e}</div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function pieceClick(i){
+  const el=document.getElementById('pp'+i);
+  if(el.classList.contains('used'))return;
+  document.querySelectorAll('.p-piece.sel').forEach(e=>e.classList.remove('sel'));
+  if(pSel===i){pSel=null;return;}
+  el.classList.add('sel');
+  pSel=i;
+}
+
+function slotClick(s){
+  if(pSel===null)return;
+  if(pPlaced[s])return;
+  const piece=document.getElementById('pp'+pSel);
+  const correctSlot=parseInt(piece.dataset.slot);
+  const slot=document.getElementById('ps'+s);
+
+  if(correctSlot===s){
+    slot.innerHTML=`<div style="font-size:20px;display:flex;flex-direction:column;align-items:center;gap:2px">
+      ${dinos[cur].pieces[s].e}
+      <span style="font-size:8px;font-weight:800;color:#2d6a1f">${dinos[cur].pieces[s].label}</span>
+    </div>`;
+    slot.classList.add('correct');
+    piece.classList.add('used');
+    pPlaced[s]=true;pSel=null;
+    snd('ding');
+    document.querySelectorAll('.p-piece.sel').forEach(e=>e.classList.remove('sel'));
+    if(Object.keys(pPlaced).length===dinos[cur].pieces.length)
+      party('🧩 Puzzle complete! Awesome work! 🦕');
+  } else {
+    slot.classList.add('highlight');
+    setTimeout(()=>slot.classList.remove('highlight'),500);
+  }
+}
+
+// ─── START ────────────────────────────────────────────────────────────────────
+render(0);
+</script>
+</body>
+</html>

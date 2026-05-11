@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>About Margaret</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f0f5;
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone {
+      width: 390px;
+      min-height: 100vh;
+      background: #f0f0f5;
+    }
+
+    /* Header */
+    .header {
+      background: #E2725B;
+      padding: 52px 20px 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .header-back {
+      position: absolute;
+      left: 20px;
+      top: 52px;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+    }
+    .header h1 { color: white; font-size: 20px; font-weight: 700; }
+    .header p { color: rgba(255,255,255,0.85); font-size: 13px; }
+
+    /* Feed */
+    .feed { padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* Profile card */
+    .profile-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #E2725B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 26px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .profile-info h2 { font-size: 18px; font-weight: 700; color: #1a1a1a; }
+    .profile-info .room { font-size: 13px; color: #888; margin-top: 2px; }
+    .profile-info .tagline { font-size: 13px; color: #555; margin-top: 6px; font-style: italic; line-height: 1.4; }
+
+    /* Section */
+    .section-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 16px;
+    }
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    /* Chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .chip-love { background: #fce8e4; color: #E2725B; }
+    .chip-dislike { background: #f0f0f5; color: #777; }
+
+    /* Story */
+    .story-text {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.65;
+    }
+
+    /* Upload buttons */
+    .upload-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      cursor: pointer;
+    }
+    .upload-btn + .upload-btn { margin-top: 10px; }
+    .upload-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .icon-coral { background: #fce8e4; }
+    .icon-blue  { background: #e4f0fc; }
+    .icon-green { background: #e4f5e9; }
+    .upload-text { flex: 1; }
+    .upload-text strong { font-size: 15px; color: #1a1a1a; display: block; }
+    .upload-text span { font-size: 13px; color: #888; }
+    .upload-chevron { color: #E2725B; font-size: 20px; }
+
+    /* Send bar */
+    .send-bar { background: #E2725B; padding: 0 16px 18px; }
+    .send-bar-inner { background: rgba(255,255,255,0.15); border-radius: 14px; padding: 14px 16px; }
+    .send-label { color: white; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .send-sublabel { color: rgba(255,255,255,0.8); font-size: 12px; margin-bottom: 10px; }
+    .send-btns { display: flex; gap: 10px; }
+    .send-btn {
+      flex: 1; background: white; border-radius: 10px; padding: 10px 6px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+    }
+    .send-btn .btn-icon { font-size: 20px; }
+    .send-btn .btn-label { font-size: 12px; font-weight: 600; color: #E2725B; }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <div class="header">
+    <div class="header-back">‹</div>
+    <h1>About Margaret</h1>
+    <p>Help staff know and love her</p>
+  </div>
+
+  <div class="send-bar">
+    <div class="send-bar-inner">
+      <div class="send-label">Send her something today</div>
+      <div class="send-sublabel">Remind her she's loved — staff will share it</div>
+      <div class="send-btns">
+        <div class="send-btn"><span class="btn-icon">📷</span><span class="btn-label">Photo</span></div>
+        <div class="send-btn"><span class="btn-icon">🎙️</span><span class="btn-label">Voice</span></div>
+        <div class="send-btn"><span class="btn-icon">💬</span><span class="btn-label">Note</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feed">
+
+    <!-- Profile -->
+    <div class="profile-card">
+      <div class="avatar">MG</div>
+      <div class="profile-info">
+        <h2>Margaret Gurley</h2>
+        <div class="room">Room 412 · 4th Floor</div>
+        <div class="tagline">"She lights up when there's music playing."</div>
+      </div>
+    </div>
+
+    <!-- She loves -->
+    <div class="section-card">
+      <div class="section-label">She Loves</div>
+      <div class="chips">
+        <span class="chip chip-love">🎵 Jazz music</span>
+        <span class="chip chip-love">🌷 Gardening</span>
+        <span class="chip chip-love">💙 The color blue</span>
+        <span class="chip chip-love">🎬 Old movies</span>
+        <span class="chip chip-love">🍫 Chocolate</span>
+        <span class="chip chip-love">🐱 Her cat Mittens</span>
+        <span class="chip chip-love">💃 Dancing</span>
+        <span class="chip chip-love">☕ Morning coffee</span>
+      </div>
+    </div>
+
+    <!-- She dislikes -->
+    <div class="section-card">
+      <div class="section-label">She Dislikes</div>
+      <div class="chips">
+        <span class="chip chip-dislike">🔊 Loud noises</span>
+        <span class="chip chip-dislike">⏩ Being rushed</span>
+        <span class="chip chip-dislike">💡 Bright overhead lights</span>
+        <span class="chip chip-dislike">🥦 Broccoli</span>
+      </div>
+    </div>
+
+    <!-- Her story -->
+    <div class="section-card">
+      <div class="section-label">Her Story</div>
+      <div class="story-text">
+        Margaret grew up in St. Paul, the youngest of four sisters. She spent thirty years as a piano teacher and could play anything by ear. She and her husband Robert raised their family in Highland Park, tending the same garden every summer for forty years. She's proud, funny, and fiercely loyal — and she never forgets a face, even when names slip away. Ask her about the 1965 World Series and she'll talk for twenty minutes.
+      </div>
+    </div>
+
+    <!-- Share with staff -->
+    <div class="section-title">Share with Staff</div>
+
+    <div class="upload-btn">
+      <div class="upload-icon icon-coral">📷</div>
+      <div class="upload-text">
+        <strong>Add a Photo</strong>
+        <span>Show her a face she loves</span>
+      </div>
+      <span class="upload-chevron">›</span>
+    </div>
+
+    <div class="upload-btn">
+      <div class="upload-icon icon-blue">🎙️</div>
+      <div class="upload-text">
+        <strong>Record a Voice Message</strong>
+        <span>Hearing your voice brings her joy</span>
+      </div>
+      <span class="upload-chevron">›</span>
+    </div>
+
+    <div class="upload-btn">
+      <div class="upload-icon icon-green">📝</div>
+      <div class="upload-text">
+        <strong>Write a Story or Memory</strong>
+        <span>Help staff spark a conversation</span>
+      </div>
+      <span class="upload-chevron">›</span>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Resources</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f0f5;
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone {
+      width: 390px;
+      min-height: 100vh;
+      background: #f0f0f5;
+    }
+
+    /* Header */
+    .header {
+      background: #E2725B;
+      padding: 52px 20px 14px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .header-back {
+      position: absolute;
+      left: 20px;
+      top: 52px;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      opacity: 0.9;
+    }
+    .header h1 {
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    /* Search bar */
+    .search-wrap {
+      background: #E2725B;
+      padding: 12px 16px 18px;
+    }
+    .search-bar {
+      background: white;
+      border-radius: 24px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+    .search-bar .icon { color: #aaa; font-size: 16px; }
+    .search-bar input {
+      border: none;
+      outline: none;
+      font-size: 14px;
+      color: #333;
+      width: 100%;
+      background: transparent;
+    }
+    .search-bar input::placeholder { color: #aaa; }
+
+    /* Feed */
+    .feed {
+      padding: 16px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Section header */
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+    .section-subtitle {
+      font-size: 13px;
+      color: #888;
+      margin-top: -6px;
+      margin-bottom: 10px;
+    }
+
+    /* Topic chips */
+    .chips {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 12px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1.5px solid #E2725B;
+      background: white;
+      color: #E2725B;
+      cursor: pointer;
+    }
+    .chip.active {
+      background: #E2725B;
+      color: white;
+    }
+
+    /* Resource card */
+    .card {
+      background: white;
+      border-radius: 14px;
+      display: flex;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      margin-bottom: 10px;
+    }
+    .card-sidebar {
+      width: 64px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+    .card-body {
+      flex: 1;
+      padding: 14px 14px 14px 12px;
+      border-left: 1px solid #f0f0f0;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1.35;
+      margin-bottom: 5px;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+    .card-cta {
+      font-size: 13px;
+      font-weight: 600;
+      color: #E2725B;
+      text-decoration: none;
+    }
+
+    .bg-blue    { background: #4A9CC7; }
+    .bg-green   { background: #5BAE6E; }
+    .bg-purple  { background: #9B6DBF; }
+    .bg-amber   { background: #D4A017; }
+
+    /* Send bar */
+    .send-bar { background: #E2725B; padding: 0 16px 18px; }
+    .send-bar-inner { background: rgba(255,255,255,0.15); border-radius: 14px; padding: 14px 16px; }
+    .send-label { color: white; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .send-sublabel { color: rgba(255,255,255,0.8); font-size: 12px; margin-bottom: 10px; }
+    .send-btns { display: flex; gap: 10px; }
+    .send-btn {
+      flex: 1; background: white; border-radius: 10px; padding: 10px 6px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+    }
+    .send-btn .btn-icon { font-size: 20px; }
+    .send-btn .btn-label { font-size: 12px; font-weight: 600; color: #E2725B; }
+
+    /* Today's context banner */
+    .context-banner {
+      background: #fef0ed;
+      border: 1.5px solid #f5c4b8;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #b05a44;
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+    .context-banner strong { font-weight: 700; }
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <div class="header">
+    <div class="header-back">‹</div>
+    <h1>Resources</h1>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-bar">
+      <span class="icon">🔍</span>
+      <input type="text" placeholder="Search: try 'sundowning' or 'paranoia'" />
+    </div>
+  </div>
+
+  <div class="send-bar">
+    <div class="send-bar-inner">
+      <div class="send-label">Send her something today</div>
+      <div class="send-sublabel">A bright moment in her afternoon</div>
+      <div class="send-btns">
+        <div class="send-btn"><span class="btn-icon">📷</span><span class="btn-label">Photo</span></div>
+        <div class="send-btn"><span class="btn-icon">🎙️</span><span class="btn-label">Voice</span></div>
+        <div class="send-btn"><span class="btn-icon">💬</span><span class="btn-label">Note</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feed">
+
+    <!-- Based on today -->
+    <div>
+      <div class="section-title">Based on Today</div>
+      <div class="context-banner">
+        <strong>Margaret had a harder afternoon.</strong> Today's notes mentioned paranoia and mood changes — these resources may help you understand what she's experiencing.
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-sidebar bg-blue">📄</div>
+        <div class="card-body">
+          <div class="card-title">Understanding Paranoia in Dementia: Why It Happens and How to Respond</div>
+          <div class="card-desc">Learn why paranoia is common in memory loss and gentle ways to de-escalate without arguing.</div>
+          <a class="card-cta" href="#">Read more →</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-sidebar bg-green">📞</div>
+        <div class="card-body">
+          <div class="card-title">Alzheimer's Association 24/7 Helpline</div>
+          <div class="card-desc">Free support for caregivers and families — any time, any day. Real people, not recordings. Call 800-272-3900.</div>
+          <a class="card-cta" href="#">Call now →</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-sidebar bg-purple">👥</div>
+        <div class="card-body">
+          <div class="card-title">Caregiver Support Circle — Weekly Online Group</div>
+          <div class="card-desc">A safe space to share and be heard with others navigating the same journey. Free, virtual, every Thursday.</div>
+          <a class="card-cta" href="#">Learn more →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Browse all -->
+    <div>
+      <div class="section-title">Browse All</div>
+      <div class="chips">
+        <div class="chip active">Paranoia</div>
+        <div class="chip">Sundowning</div>
+        <div class="chip">Grief</div>
+        <div class="chip">Anxiety</div>
+        <div class="chip">Communication</div>
+        <div class="chip">Sleep</div>
+        <div class="chip">Wandering</div>
+        <div class="chip">Aggression</div>
+      </div>
+      <div class="section-subtitle">Showing results for: Paranoia</div>
+
+      <div class="card">
+        <div class="card-sidebar bg-amber">▶️</div>
+        <div class="card-body">
+          <div class="card-title">Teepa Snow: How to Handle Accusatory Behavior in Dementia</div>
+          <div class="card-desc">Expert dementia care educator explains what drives false accusations — and what actually helps families respond.</div>
+          <a class="card-cta" href="#">Watch now →</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-sidebar bg-blue">📄</div>
+        <div class="card-body">
+          <div class="card-title">When Your Loved One Thinks Someone Has Stolen From Them</div>
+          <div class="card-desc">Practical strategies from the Family Caregiver Alliance for one of dementia's most painful and confusing symptoms.</div>
+          <a class="card-cta" href="#">Read more →</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-sidebar bg-purple">👥</div>
+        <div class="card-body">
+          <div class="card-title">r/dementia — Online Caregiver Community</div>
+          <div class="card-desc">A compassionate, peer-supported community of families sharing real experiences. You are not alone in this.</div>
+          <a class="card-cta" href="#">Visit community →</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

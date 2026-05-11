@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Memory Book</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f0f0f5;
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone {
+      width: 390px;
+      min-height: 100vh;
+      background: #f0f0f5;
+    }
+
+    /* Header */
+    .header {
+      background: #E2725B;
+      padding: 52px 20px 18px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .header-back {
+      position: absolute;
+      left: 20px;
+      top: 52px;
+      color: white;
+      font-size: 22px;
+    }
+    .header h1 { color: white; font-size: 20px; font-weight: 700; }
+    .header p { color: rgba(255,255,255,0.85); font-size: 13px; }
+
+    /* Send bar */
+    .send-bar {
+      background: #E2725B;
+      padding: 0 16px 18px;
+    }
+    .send-bar-inner {
+      background: rgba(255,255,255,0.15);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .send-label { color: white; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+    .send-sublabel { color: rgba(255,255,255,0.8); font-size: 12px; margin-bottom: 10px; }
+    .send-btns { display: flex; gap: 10px; }
+    .send-btn {
+      flex: 1;
+      background: white;
+      border-radius: 10px;
+      padding: 10px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .send-btn .btn-icon { font-size: 20px; }
+    .send-btn .btn-label { font-size: 12px; font-weight: 600; color: #E2725B; }
+
+    /* Feed */
+    .feed { padding: 16px 16px 40px; display: flex; flex-direction: column; gap: 12px; }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      overflow: hidden;
+    }
+    .card-family { border-left: 4px solid #E2725B; }
+    .card-staff  { border-left: 4px solid #3AADA8; background: #f4fafa; }
+    .card-song   { border-left: 4px solid #D4A017; }
+
+    .card-inner { padding: 14px 16px; }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .card-sender { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+    .card-meta { font-size: 12px; color: #aaa; }
+    .staff-badge {
+      display: inline-block;
+      background: #e0f5f4;
+      color: #3AADA8;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 6px;
+    }
+
+    /* Photo card */
+    .photo-placeholder {
+      width: 100%;
+      height: 180px;
+      background: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: #bbb;
+    }
+    .photo-caption {
+      font-size: 14px;
+      color: #444;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Voice card */
+    .voice-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .voice-icon { font-size: 24px; flex-shrink: 0; }
+    .waveform {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+      height: 32px;
+    }
+    .waveform div {
+      width: 3px;
+      border-radius: 2px;
+      background: #E2725B;
+      opacity: 0.7;
+    }
+    .voice-duration { font-size: 12px; color: #aaa; flex-shrink: 0; }
+
+    /* Written memory */
+    .memory-quote {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.6;
+      font-style: italic;
+      border-left: 3px solid #f5c4b8;
+      padding-left: 10px;
+      margin: 6px 0;
+    }
+
+    /* Song card */
+    .song-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .song-play {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #fce8e4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      color: #E2725B;
+    }
+    .song-info { flex: 1; }
+    .song-title { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+    .song-artist { font-size: 13px; color: #888; margin-top: 2px; }
+
+    .mood { font-size: 18px; }
+    .card-body-text { font-size: 14px; color: #444; line-height: 1.5; }
+    .card-note { font-size: 13px; color: #666; margin-top: 6px; font-style: italic; }
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <div class="header">
+    <div class="header-back">‹</div>
+    <h1>Memory Book</h1>
+    <p>Margaret's story, told together</p>
+  </div>
+
+  <div class="send-bar">
+    <div class="send-bar-inner">
+      <div class="send-label">Send something today</div>
+      <div class="send-sublabel">Staff will share it with her this afternoon</div>
+      <div class="send-btns">
+        <div class="send-btn">
+          <span class="btn-icon">📷</span>
+          <span class="btn-label">Photo</span>
+        </div>
+        <div class="send-btn">
+          <span class="btn-icon">🎙️</span>
+          <span class="btn-label">Voice</span>
+        </div>
+        <div class="send-btn">
+          <span class="btn-icon">💬</span>
+          <span class="btn-label">Note</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feed">
+
+    <!-- Staff moment -->
+    <div class="card card-staff">
+      <div class="card-inner">
+        <div class="card-header">
+          <div>
+            <span class="card-sender">Priya S.</span>
+            <span class="staff-badge">From Staff</span>
+          </div>
+          <span class="card-meta">Today 2:15 PM</span>
+        </div>
+        <div class="card-body-text">Margaret was humming while we folded laundry together — she knew every word to "Que Sera Sera." One of those good moments. <span class="mood">😊</span></div>
+      </div>
+    </div>
+
+    <!-- Family photo -->
+    <div class="card card-family">
+      <div class="photo-placeholder">🖼</div>
+      <div class="card-inner">
+        <div class="card-header">
+          <span class="card-sender">Susan (daughter)</span>
+          <span class="card-meta">Apr 29</span>
+        </div>
+        <div class="photo-caption">Easter Sunday at David's house — she wore her favorite blue cardigan all day.</div>
+      </div>
+    </div>
+
+    <!-- Voice message -->
+    <div class="card card-family">
+      <div class="card-inner">
+        <div class="card-header">
+          <span class="card-sender">Tom (son)</span>
+          <span class="card-meta">Apr 28</span>
+        </div>
+        <div class="voice-row">
+          <span class="voice-icon">🎙️</span>
+          <div class="waveform">
+            <div style="height:10px"></div><div style="height:18px"></div><div style="height:24px"></div>
+            <div style="height:14px"></div><div style="height:28px"></div><div style="height:20px"></div>
+            <div style="height:12px"></div><div style="height:22px"></div><div style="height:16px"></div>
+            <div style="height:26px"></div><div style="height:18px"></div><div style="height:10px"></div>
+            <div style="height:20px"></div><div style="height:14px"></div>
+          </div>
+          <span class="voice-duration">0:42</span>
+        </div>
+        <div class="card-note">"Hi Mom, it's Tommy. Just wanted to hear your voice..."</div>
+      </div>
+    </div>
+
+    <!-- Written memory -->
+    <div class="card card-family">
+      <div class="card-inner">
+        <div class="card-header">
+          <span class="card-sender">Susan (daughter)</span>
+          <span class="card-meta">Apr 27</span>
+        </div>
+        <div class="memory-quote">"Every Sunday morning she'd make a big stack of pancakes and play Moon River on the radio. We'd all sit there in our pajamas. She'd sing along to every word."</div>
+        <div class="card-note">📝 A memory from home</div>
+      </div>
+    </div>
+
+    <!-- Favorite song -->
+    <div class="card card-song">
+      <div class="card-inner">
+        <div class="card-header">
+          <span class="card-sender">Added by Susan</span>
+          <span class="card-meta">Apr 26</span>
+        </div>
+        <div class="song-row">
+          <div class="song-play">▶</div>
+          <div class="song-info">
+            <div class="song-title">Moon River</div>
+            <div class="song-artist">Andy Williams · 1961</div>
+          </div>
+          <span style="font-size:22px">🎵</span>
+        </div>
+        <div class="card-note" style="margin-top:10px">Her all-time favorite — play it any time.</div>
+      </div>
+    </div>
+
+    <!-- Family photo 2 -->
+    <div class="card card-family">
+      <div class="photo-placeholder">🖼</div>
+      <div class="card-inner">
+        <div class="card-header">
+          <span class="card-sender">David (grandson)</span>
+          <span class="card-meta">Apr 24</span>
+        </div>
+        <div class="photo-caption">Grandma at my birthday dinner — she laughed so hard at dad's jokes.</div>
+      </div>
+    </div>
+
+    <!-- Staff moment 2 -->
+    <div class="card card-staff">
+      <div class="card-inner">
+        <div class="card-header">
+          <div>
+            <span class="card-sender">Gary R.</span>
+            <span class="staff-badge">From Staff</span>
+          </div>
+          <span class="card-meta">Apr 23</span>
+        </div>
+        <div class="card-body-text">We played Big Band music during morning exercises today. Margaret got up and started dancing — the whole room joined in. <span class="mood">😊</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

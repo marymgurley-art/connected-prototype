@@ -1,0 +1,163 @@
+
+<style>
+  h2.sr-only { position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0); }
+  .wrap { padding: 1.5rem 0; }
+  .legend { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:1rem; font-size:12px; color:var(--color-text-secondary); }
+  .legend span { display:flex;align-items:center;gap:5px; }
+  .dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+  .dot-yes { background:#3B8BD4; }
+  .dot-partial { background:#EF9F27; }
+  .dot-no { background:var(--color-border-secondary); }
+  table { width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
+  th, td { padding:8px 10px; text-align:left; border-bottom:0.5px solid var(--color-border-tertiary); vertical-align:top; }
+  th { font-size:11px; font-weight:500; color:var(--color-text-secondary); background:var(--color-background-secondary); position:sticky;top:0; }
+  td:first-child { font-weight:500; font-size:12px; width:130px; color:var(--color-text-primary); }
+  th:first-child { width:130px; }
+  .col-con { width:80px; }
+  tr:hover td { background:var(--color-background-secondary); }
+  .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:500; }
+  .badge-fac { background:var(--color-background-info);color:var(--color-text-info); }
+  .badge-fam { background:#EAF3DE;color:#3B6D11; }
+  .badge-both { background:#FAEEDA;color:#854F0B; }
+  .sym-yes { color:#185FA5; font-size:14px; }
+  .sym-part { color:#BA7517; font-size:14px; }
+  .sym-no { color:var(--color-text-tertiary); font-size:14px; }
+  .tag { display:inline-block; background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:4px; padding:1px 6px; font-size:10px; color:var(--color-text-secondary); margin:1px 1px 0 0; }
+  .connected { background:var(--color-background-info); border-color:var(--color-border-info); color:var(--color-text-info); }
+  .cname { font-weight:500; font-size:12px; color:var(--color-text-primary); }
+  .csub { font-size:10px; color:var(--color-text-tertiary); margin-top:1px; }
+</style>
+<div class="wrap">
+  <h2 class="sr-only">Feature comparison table for five competitors in the senior living family communication space: LifeLoop, Uniguest/Touchtown, Caremerge, StoriiCare, and Go Icon.</h2>
+  <div class="legend">
+    <span><span class="dot dot-yes"></span> Full support</span>
+    <span><span class="dot dot-partial"></span> Partial / limited</span>
+    <span><span class="dot dot-no"></span> Not offered</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>LifeLoop</th>
+        <th>Uniguest (Touchtown)</th>
+        <th>Caremerge</th>
+        <th>StoriiCare</th>
+        <th>Go Icon</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sells to</td>
+        <td><span class="badge badge-fac">Facilities</span></td>
+        <td><span class="badge badge-fac">Facilities</span></td>
+        <td><span class="badge badge-fac">Facilities</span></td>
+        <td><span class="badge badge-fac">Facilities</span></td>
+        <td><span class="badge badge-fac">Facilities</span></td>
+      </tr>
+      <tr>
+        <td>Family app</td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span> <span class="tag">Family Connector</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span> <span class="tag connected">Storii Family</span></td>
+        <td><span class="sym-part">◑</span> <span class="tag">Web portal</span></td>
+      </tr>
+      <tr>
+        <td>Real-time activity feed</td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-part">◑</span> <span class="tag">Calendar/menu only</span></td>
+        <td><span class="sym-part">◑</span></td>
+        <td><span class="sym-yes">●</span> <span class="tag">With alerts</span></td>
+        <td><span class="sym-part">◑</span> <span class="tag">Announcements</span></td>
+      </tr>
+      <tr>
+        <td>Photo sharing (staff → family)</td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-part">◑</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-part">◑</span></td>
+      </tr>
+      <tr>
+        <td>Family → resident messaging</td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-part">◑</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-part">◑</span></td>
+      </tr>
+      <tr>
+        <td>Voice messages</td>
+        <td><span class="sym-no">○</span></td>
+        <td><span class="sym-no">○</span></td>
+        <td><span class="sym-no">○</span></td>
+        <td><span class="sym-no">○</span></td>
+        <td><span class="sym-part">◑</span> <span class="tag">Alexa / dial-in</span></td>
+      </tr>
+      <tr>
+        <td>Video messages</td>
+        <td><span class="sym-no">○</span></td>
+        <td><span class="sym-no">○</span></td>
+        <td><span class="sym-no">○</span></td>
+        <td><span class="sym-part">◑</span></td>
+        <td><span class="sym-no">○</span></td>
+      </tr>
+      <tr>
+        <td>Staff workflow tools</td>
+        <td><span class="sym-yes">●</span> <span class="tag">AI-assisted</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+      </tr>
+      <tr>
+        <td>EHR / clinical docs</td>
+        <td><span class="sym-part">◑</span> <span class="tag">Via partners</span></td>
+        <td><span class="sym-no">○</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-no">○</span></td>
+      </tr>
+      <tr>
+        <td>Memory care–specific UX</td>
+        <td><span class="sym-part">◑</span></td>
+        <td><span class="sym-no">○</span></td>
+        <td><span class="sym-part">◑</span></td>
+        <td><span class="sym-yes">●</span> <span class="tag connected">Core focus</span></td>
+        <td><span class="sym-no">○</span></td>
+      </tr>
+      <tr>
+        <td>Digital signage</td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+      </tr>
+      <tr>
+        <td>Activity / calendar mgmt</td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+      </tr>
+      <tr>
+        <td>Analytics / reporting</td>
+        <td><span class="sym-yes">●</span> <span class="tag">AI-enhanced</span></td>
+        <td><span class="sym-part">◑</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-yes">●</span></td>
+        <td><span class="sym-part">◑</span></td>
+      </tr>
+      <tr>
+        <td>Pricing model</td>
+        <td style="font-size:11px;color:var(--color-text-secondary)">B2B SaaS, custom quote</td>
+        <td style="font-size:11px;color:var(--color-text-secondary)">B2B SaaS, custom quote</td>
+        <td style="font-size:11px;color:var(--color-text-secondary)">~$100–500/mo+, custom</td>
+        <td style="font-size:11px;color:var(--color-text-secondary)">~$350/mo+ subscription</td>
+        <td style="font-size:11px;color:var(--color-text-secondary)">B2B SaaS, custom quote</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
