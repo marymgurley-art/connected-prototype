@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Connected — Judy's Day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --peach: #D4785A;
+  --peach-light: #F5C4B3;
+  --peach-bg: #FEF1EB;
+  --sage: #7DA897;
+  --sage-light: #BFD9D1;
+  --sage-bg: #EBF4F1;
+  --warm-white: #FAF7F4;
+  --warm-cream: #F4EDE4;
+  --gold: #C8904A;
+  --gold-light: #F0D9B0;
+  --gold-bg: #FDF6EC;
+  --text-dark: #3D2E24;
+  --text-mid: #6B5A50;
+  --text-light: #9A8A80;
+  --border: #EDE5DC;
+  --white: #FFFFFF;
+  --r: 12px;
+  --r-sm: 8px;
+  --shadow-sm: 0 1px 4px rgba(61,46,36,0.07);
+  --shadow-md: 0 4px 16px rgba(61,46,36,0.11);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; background: #DDD5CA; font-family: 'Lato', sans-serif; color: var(--text-dark); -webkit-font-smoothing: antialiased; }
+
+/* ── App shell ── */
+#app {
+  width: 390px; height: 100vh; max-height: 844px;
+  margin: 0 auto;
+  background: var(--warm-white);
+  display: flex; flex-direction: column;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.12), 0 20px 60px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+@media (max-width: 420px) {
+  #app { width: 100%; max-height: 100%; box-shadow: none; }
+  html, body { background: var(--warm-white); }
+}
+
+/* ── Status bar ── */
+.status-bar {
+  height: 44px; flex-shrink: 0;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+}
+.status-time { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+.status-icons { font-size: 13px; letter-spacing: 2px; }
+
+/* ── Screens container ── */
+#screens { flex: 1; position: relative; overflow: hidden; }
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+.screen.active { opacity: 1; pointer-events: all; }
+
+/* ── Scrollable body ── */
+.s-body {
+  flex: 1; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.s-body::-webkit-scrollbar { display: none; }
+
+/* ── Bottom nav ── */
+.bottom-nav {
+  flex-shrink: 0; height: 76px;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: flex-start; padding-top: 10px;
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  border: none; background: none; cursor: pointer; color: var(--text-light);
+  padding: 4px 0; transition: color 0.15s; -webkit-tap-highlight-color: transparent;
+}
+.nav-btn.active { color: var(--peach); }
+.nav-ico { font-size: 22px; line-height: 1; }
+.nav-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; }
+
+/* ── Shared header ── */
+.s-header {
+  flex-shrink: 0; background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px 12px;
+}
+.s-header-row { display: flex; align-items: center; gap: 12px; }
+.back-btn {
+  width: 34px; height: 34px; border-radius: 50%; border: none;
+  background: var(--warm-cream); color: var(--text-dark);
+  font-size: 20px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+}
+.s-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--text-dark); line-height: 1.2; }
+.s-sub { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+
+/* ── Tags ── */
+.tag {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 3px 9px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1px;
+}
+.tag-meal    { background: var(--peach-bg);  color: var(--peach); }
+.tag-social  { background: #F0EDF8;          color: #8B7CC8; }
+.tag-ex      { background: var(--sage-bg);   color: var(--sage); }
+.tag-creative{ background: var(--gold-bg);   color: var(--gold); }
+.tag-fav     { background: var(--gold-bg);   color: var(--gold); }
+.tag-well    { background: #EEF4F8;          color: #5B8EAD; }
+
+/* ── Buttons ── */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 14px 24px; border-radius: 100px; border: none;
+  font-family: 'Lato', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all 0.14s; width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(0.97); }
+.btn-peach  { background: var(--peach);  color: #fff; box-shadow: 0 4px 16px rgba(232,137,106,0.32); }
+.btn-sage   { background: var(--sage);   color: #fff; box-shadow: 0 4px 16px rgba(125,168,151,0.32); }
+.btn-ghost  { background: var(--warm-cream); color: var(--text-dark); }
+
+/* ════════════════════════════
+   SCREEN 1 — TODAY'S FEED
+   ════════════════════════════ */
+.feed-top {
+  flex-shrink: 0; background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 20px 14px;
+  display: flex; align-items: center; gap: 14px;
+}
+.judy-avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  overflow: hidden; flex-shrink: 0;
+  border: 2px solid var(--peach-light);
+}
+.feed-top-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px; font-weight: 600; color: var(--text-dark); line-height: 1.2;
+}
+.feed-top-text p { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.live-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; color: var(--sage); margin-top: 4px;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--sage);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.feed-pad { padding: 14px 14px 8px; }
+.feed-pad:last-child { padding-bottom: 20px; }
+
+/* Feed cards */
+.card {
+  background: var(--white); border-radius: var(--r);
+  border: 1px solid var(--border);
+  padding: 15px; margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+}
+.card-time {
+  font-size: 10px; font-weight: 700; color: var(--text-light);
+  text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px;
+}
+.card-text { font-size: 14px; line-height: 1.55; color: var(--text-dark); }
+.card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+/* Highlighted watercolor card */
+.card-star {
+  border: 2px solid var(--gold-light);
+  background: linear-gradient(135deg, #FFFDF9 0%, #FEF9F0 100%);
+  box-shadow: 0 4px 20px rgba(200,144,74,0.15);
+  cursor: pointer;
+}
+.card-star:active { transform: scale(0.99); }
+.star-badge {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 8px;
+}
+.star-badge span:first-child { font-size: 13px; }
+.star-badge span:last-child {
+  font-size: 10px; font-weight: 700; color: var(--gold);
+  text-transform: uppercase; letter-spacing: 0.6px;
+}
+.card-headline { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; }
+.feed-photo { width: 100%; border-radius: var(--r-sm); overflow: hidden; margin: 10px 0 8px; }
+.tap-hint { font-size: 11px; color: var(--text-light); margin-top: 6px; display: flex; align-items: center; gap: 3px; }
+
+.feed-cta { padding: 4px 14px 14px; flex-shrink: 0; }
+
+/* ════════════════════════════
+   SCREEN 2 — CALENDAR
+   ════════════════════════════ */
+.cal-note {
+  font-size: 12px; color: var(--text-light); font-style: italic;
+  background: var(--warm-cream); border-radius: var(--r-sm);
+  padding: 10px 14px; margin-bottom: 14px;
+}
+.cal-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.cal-row:last-child { border-bottom: none; }
+.cal-row.attended { background: none; }
+.cal-row.highlighted {
+  background: var(--gold-bg); border-radius: 10px;
+  padding: 12px; margin-bottom: 2px; border: 1px solid #EACF9A;
+  border-bottom: 1px solid #EACF9A;
+}
+.cal-time { width: 50px; flex-shrink: 0; font-size: 12px; font-weight: 700; color: var(--text-mid); padding-top: 2px; }
+.cal-info { flex: 1; }
+.cal-name { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; }
+.cal-loc { font-size: 11px; color: var(--text-light); margin-bottom: 6px; }
+.cal-check {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0; margin-top: 2px;
+}
+.cal-check-yes { background: var(--sage-bg); color: var(--sage); font-weight: 700; }
+.cal-check-no  { background: var(--warm-cream); color: var(--border); }
+
+/* ════════════════════════════
+   SCREEN 3 — PROFILE
+   ════════════════════════════ */
+.profile-hero {
+  background: linear-gradient(180deg, var(--warm-cream) 0%, var(--warm-white) 100%);
+  padding: 24px 20px 18px;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.profile-avatar {
+  width: 80px; height: 80px; border-radius: 50%; overflow: hidden;
+  border: 3px solid var(--white); box-shadow: var(--shadow-md); margin-bottom: 12px;
+}
+.profile-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: var(--text-dark); }
+.profile-room { font-size: 12px; color: var(--text-light); margin-top: 3px; }
+.edit-btn {
+  margin-top: 12px; padding: 7px 16px;
+  background: var(--warm-cream); border: 1px solid var(--border);
+  border-radius: 100px; font-size: 12px; font-weight: 700; color: var(--text-mid);
+  cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+}
+.p-section { padding: 18px 20px 0; }
+.p-section-title {
+  font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600;
+  color: var(--text-dark); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 7px;
+}
+.story-block {
+  font-size: 14px; line-height: 1.65; color: var(--text-mid); font-style: italic;
+  background: var(--warm-cream); padding: 14px 16px; border-radius: var(--r);
+  border-left: 3px solid var(--peach-light);
+}
+.divider { height: 1px; background: var(--border); margin: 18px 20px 0; }
+.loves-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.love-chip {
+  background: var(--white); border: 1px solid var(--border); border-radius: var(--r-sm);
+  padding: 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center;
+}
+.love-ico { font-size: 20px; }
+.love-lbl { font-size: 10px; font-weight: 700; color: var(--text-mid); }
+.helpful-list { list-style: none; }
+.helpful-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0; font-size: 13px; line-height: 1.5; color: var(--text-mid);
+  border-bottom: 1px solid var(--border);
+}
+.helpful-list li:last-child { border-bottom: none; }
+.h-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sage); flex-shrink: 0; margin-top: 5px; }
+.fam-list { list-style: none; }
+.fam-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 0; border-bottom: 1px solid var(--border);
+}
+.fam-item:last-child { border-bottom: none; }
+.fam-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--peach-bg); display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.fam-name { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+.fam-role { font-size: 12px; color: var(--text-light); }
+
+/* ════════════════════════════
+   SCREEN 4 — MOMENT DETAIL
+   ════════════════════════════ */
+.moment-photo { flex-shrink: 0; height: 260px; overflow: hidden; }
+.moment-meta {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+}
+.moment-timestamp { font-size: 12px; color: var(--text-light); display: flex; align-items: center; gap: 4px; }
+.heart-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 8px 14px; border-radius: 100px;
+  border: 2px solid var(--border); background: var(--white);
+  color: var(--text-light); font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+}
+.heart-btn.liked { border-color: #E86060; background: #FFF0F0; color: #E86060; }
+.heart-ico { font-size: 17px; transition: transform 0.2s; }
+.heart-btn.liked .heart-ico { transform: scale(1.25); }
+.moment-note { font-size: 16px; line-height: 1.65; color: var(--text-dark); margin-bottom: 16px; }
+.moment-by { font-size: 12px; color: var(--text-light); margin-bottom: 20px; display: flex; align-items: center; gap: 5px; }
+.moment-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
+.moment-prompt { font-size: 14px; color: var(--text-mid); text-align: center; margin-bottom: 12px; }
+
+/* ════════════════════════════
+   SCREEN 5 — SEND A MOMENT
+   ════════════════════════════ */
+.media-toggle {
+  display: flex; background: var(--warm-cream);
+  border-radius: 100px; padding: 3px; margin-bottom: 18px;
+}
+.toggle-btn {
+  flex: 1; padding: 9px; border: none; border-radius: 100px;
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.18s;
+  background: none; color: var(--text-light);
+}
+.toggle-btn.on { background: var(--white); color: var(--text-dark); box-shadow: var(--shadow-sm); }
+.capture-preview {
+  width: 100%; height: 190px; border-radius: var(--r);
+  background: var(--warm-cream); border: 2px dashed var(--border);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden; margin-bottom: 14px;
+  transition: border-color 0.2s;
+}
+.capture-preview.has-pic { border: 2px solid var(--sage-light); }
+.preview-hint { font-size: 13px; color: var(--text-light); text-align: center; padding: 20px; }
+.preview-hint-icon { font-size: 30px; margin-bottom: 6px; }
+#jake-photo { display: none; width: 100%; height: 100%; position: absolute; inset: 0; }
+.capture-row { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 18px; }
+.capture-btn {
+  width: 68px; height: 68px; border-radius: 50%;
+  border: 4px solid var(--peach-light); background: var(--peach); color: #fff;
+  font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.16s; box-shadow: 0 4px 18px rgba(232,137,106,0.38);
+  -webkit-tap-highlight-color: transparent;
+}
+.capture-btn:active { transform: scale(0.93); }
+.capture-btn.snapped { background: var(--sage); border-color: var(--sage-light); box-shadow: 0 4px 18px rgba(125,168,151,0.38); }
+.capture-hint-txt { font-size: 11px; color: var(--text-light); }
+.note-lbl { font-size: 12px; font-weight: 700; color: var(--text-mid); margin-bottom: 7px; display: flex; align-items: center; gap: 5px; }
+.note-field {
+  width: 100%; border: 1px solid var(--border); border-radius: var(--r);
+  padding: 12px 14px; font-family: 'Lato', sans-serif; font-size: 14px; line-height: 1.6;
+  color: var(--text-dark); background: var(--white); resize: none; outline: none;
+  transition: border-color 0.15s; margin-bottom: 10px;
+}
+.note-field:focus { border-color: var(--peach); }
+.attach-note { font-size: 11px; color: var(--text-light); margin-bottom: 18px; display: flex; align-items: center; gap: 5px; }
+.send-reassure {
+  margin-top: 12px; font-size: 12px; color: var(--text-mid); line-height: 1.55;
+  background: var(--sage-bg); border-radius: var(--r-sm); padding: 11px 14px;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.send-success-view {
+  display: none; flex-direction: column; align-items: center;
+  text-align: center; padding: 50px 24px 24px;
+}
+.send-success-view.show { display: flex; }
+.success-ico { font-size: 52px; margin-bottom: 16px; }
+.success-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--text-dark); margin-bottom: 10px; }
+.success-txt { font-size: 14px; color: var(--text-mid); line-height: 1.6; max-width: 270px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-time">2:51 PM</span>
+    <span class="status-icons">▲▲▲ 🔋</span>
+  </div>
+
+  <!-- SCREENS -->
+  <div id="screens">
+
+    <!-- ══════════════════════
+         SCREEN 1: FEED
+         ══════════════════════ -->
+    <div class="screen active" id="screen-feed">
+
+      <div class="feed-top">
+        <div class="judy-avatar">
+          <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="26" cy="26" r="26" fill="#F4E8DC"/>
+            <ellipse cx="26" cy="42" rx="13" ry="10" fill="#D4A882"/>
+            <rect x="22" y="30" width="8" height="9" rx="2" fill="#E8C4A0"/>
+            <circle cx="26" cy="23" r="10" fill="#E8C4A0"/>
+            <ellipse cx="26" cy="14" rx="10" ry="6" fill="#E0DBD6"/>
+            <path d="M16 20 Q15 11 26 12 Q37 11 36 20" fill="#D0CBC6" opacity="0.85"/>
+            <circle cx="22.5" cy="23" r="1.4" fill="#5A4030"/>
+            <circle cx="29.5" cy="23" r="1.4" fill="#5A4030"/>
+            <path d="M22 28 Q26 31 30 28" stroke="#A07060" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="feed-top-text">
+          <h1>Judy's Day</h1>
+          <p>Tuesday, May 13</p>
+          <div class="live-badge"><span class="live-dot"></span> Live updates</div>
+        </div>
+      </div>
+
+      <div class="s-body">
+        <div class="feed-pad">
+
+          <!-- 8:00 AM Breakfast -->
+          <div class="card">
+            <div class="card-time">8:00 AM</div>
+            <div class="card-text">🍳 Judy had breakfast — scrambled eggs and toast. She was in good spirits this morning.</div>
+            <div class="card-tags"><span class="tag tag-meal">Meal</span></div>
+          </div>
+
+          <!-- 10:00 AM Exercise -->
+          <div class="card">
+            <div class="card-time">10:00 AM</div>
+            <div class="card-text">🥁 Exercise class on the 4th floor. Judy participated for about 15 minutes.</div>
+            <div class="card-tags"><span class="tag tag-ex">Exercise</span></div>
+          </div>
+
+          <!-- 11:30 AM Lunch outing -->
+          <div class="card">
+            <div class="card-time">11:30 AM</div>
+            <div class="card-text">🌮 Judy joined the lunch outing to Teresa's Mexican Grill! She ordered the enchiladas.</div>
+            <div class="card-tags">
+              <span class="tag tag-meal">Meal</span>
+              <span class="tag tag-social">Outing</span>
+            </div>
+          </div>
+
+          <!-- 2:00 PM Watercolor — HIGHLIGHTED -->
+          <div class="card card-star" onclick="showScreen('moment','feed')">
+            <div class="star-badge"><span>✨</span><span>Special Moment</span></div>
+            <div class="card-time">2:00 PM</div>
+            <div class="card-headline">Watercolor Painting</div>
+            <div class="card-text">She stayed the whole hour. Maria said it was one of those afternoons.</div>
+            <div class="feed-photo">
+              <!-- Watercolor painting scene SVG -->
+              <svg viewBox="0 0 340 195" xmlns="http://www.w3.org/2000/svg" width="100%">
+                <defs>
+                  <filter id="f1"><feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.13"/></filter>
+                  <radialGradient id="wg1" cx="70%" cy="30%" r="60%">
+                    <stop offset="0%" stop-color="#FFF8D0" stop-opacity="0.5"/>
+                    <stop offset="100%" stop-color="#E8C890" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+                <!-- Room background -->
+                <rect width="340" height="195" fill="#F0E4CE"/>
+                <!-- Window light -->
+                <rect x="260" y="0" width="80" height="195" fill="#FFF8E8" opacity="0.55"/>
+                <!-- Table -->
+                <rect x="0" y="145" width="340" height="50" fill="#C8906A"/>
+                <rect x="0" y="141" width="340" height="10" rx="2" fill="#B07848"/>
+                <!-- Watercolor paper -->
+                <rect x="75" y="82" width="115" height="90" rx="3" fill="#FFFDF8" filter="url(#f1)"/>
+                <!-- Flowers on paper -->
+                <line x1="132" y1="160" x2="132" y2="132" stroke="#70A868" stroke-width="2.5"/>
+                <line x1="158" y1="160" x2="158" y2="132" stroke="#70A868" stroke-width="2"/>
+                <!-- Leaves -->
+                <ellipse cx="124" cy="148" rx="8" ry="4" fill="#82B870" transform="rotate(-22 124 148)" opacity="0.85"/>
+                <ellipse cx="148" cy="142" rx="7" ry="3.5" fill="#82B870" transform="rotate(22 148 142)" opacity="0.85"/>
+                <ellipse cx="166" cy="147" rx="7" ry="3.5" fill="#82B870" transform="rotate(-15 166 147)" opacity="0.85"/>
+                <!-- Pink flower -->
+                <circle cx="132" cy="120" r="4.5" fill="#F5C040" opacity="0.95"/>
+                <circle cx="132" cy="109" r="5.5" fill="#F0A0B0" opacity="0.85"/>
+                <circle cx="123" cy="116" r="5.5" fill="#E890A0" opacity="0.85"/>
+                <circle cx="141" cy="116" r="5.5" fill="#E890A0" opacity="0.85"/>
+                <circle cx="125" cy="128" r="5.5" fill="#F0B0B8" opacity="0.85"/>
+                <circle cx="139" cy="128" r="5.5" fill="#F0B0B8" opacity="0.85"/>
+                <!-- Blue flower -->
+                <circle cx="158" cy="119" r="4" fill="#F5E040" opacity="0.9"/>
+                <circle cx="158" cy="110" r="5" fill="#90A8E8" opacity="0.82"/>
+                <circle cx="150" cy="116" r="5" fill="#90A8E8" opacity="0.82"/>
+                <circle cx="166" cy="116" r="5" fill="#90A8E8" opacity="0.82"/>
+                <circle cx="153" cy="126" r="5" fill="#A0B8F0" opacity="0.82"/>
+                <circle cx="163" cy="126" r="5" fill="#A0B8F0" opacity="0.82"/>
+                <!-- Palette -->
+                <ellipse cx="220" cy="155" rx="25" ry="18" fill="#F0E8D8"/>
+                <ellipse cx="220" cy="155" rx="25" ry="18" fill="none" stroke="#C8A878" stroke-width="1.5"/>
+                <circle cx="208" cy="149" r="5" fill="#E87878" opacity="0.9"/>
+                <circle cx="220" cy="144" r="5" fill="#78A8E8" opacity="0.9"/>
+                <circle cx="232" cy="149" r="5" fill="#88C878" opacity="0.9"/>
+                <circle cx="213" cy="160" r="5" fill="#F8D060" opacity="0.9"/>
+                <circle cx="227" cy="160" r="5" fill="#C878C8" opacity="0.9"/>
+                <circle cx="220" cy="155" r="6" fill="#EDE0C8"/>
+                <!-- Paintbrush -->
+                <rect x="238" y="98" width="6" height="48" rx="3" fill="#C8906A" transform="rotate(18 241 122)"/>
+                <rect x="239" y="118" width="4" height="16" rx="2" fill="#5A8050" transform="rotate(18 241 122)" opacity="0.9"/>
+                <!-- Water cup -->
+                <rect x="52" y="148" width="24" height="20" rx="2" fill="#C8E8F0" opacity="0.9" stroke="#90C8E0" stroke-width="1"/>
+                <ellipse cx="64" cy="148" rx="12" ry="3.5" fill="#90C8E0" opacity="0.7"/>
+                <!-- Warm light overlay -->
+                <rect width="340" height="195" fill="url(#wg1)"/>
+              </svg>
+            </div>
+            <div class="card-tags">
+              <span class="tag tag-creative">Creative</span>
+              <span class="tag tag-fav">⭐ Judy's Favorite</span>
+            </div>
+            <div class="tap-hint"><span>👆</span> Tap to see more</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="feed-cta">
+        <button class="btn btn-peach" onclick="showScreen('send','feed')">
+          💌 Send a Moment to Mom
+        </button>
+      </div>
+
+    </div><!-- /screen-feed -->
+
+
+    <!-- ══════════════════════
+         SCREEN 2: CALENDAR
+         ══════════════════════ -->
+    <div class="screen" id="screen-calendar">
+      <div class="s-header">
+        <div class="s-title">Today's Schedule</div>
+        <div class="s-sub">Tuesday, May 13 · 4th Floor</div>
+      </div>
+      <div class="s-body" style="padding: 14px 14px 24px;">
+        <div class="cal-note">🗓️ Schedule may shift as the day unfolds.</div>
+
+        <div class="cal-row attended">
+          <div class="cal-time">8:00 AM</div>
+          <div class="cal-info">
+            <div class="cal-name">Breakfast</div>
+            <div class="cal-loc">4th Floor Dining Room</div>
+            <div><span class="tag tag-meal">Meal</span></div>
+          </div>
+          <div class="cal-check cal-check-yes">✓</div>
+        </div>
+
+        <div class="cal-row attended">
+          <div class="cal-time">9:30 AM</div>
+          <div class="cal-info">
+            <div class="cal-name">Greet the Day with Gary!</div>
+            <div class="cal-loc">4th Floor</div>
+            <div><span class="tag tag-well">Wellness</span></div>
+          </div>
+          <div class="cal-check cal-check-yes">✓</div>
+        </div>
+
+        <div class="cal-row attended">
+          <div class="cal-time">10:00 AM</div>
+          <div class="cal-info">
+            <div class="cal-name">Drumming</div>
+            <div class="cal-loc">North Living Room</div>
+            <div><span class="tag tag-ex">Exercise</span></div>
+          </div>
+          <div class="cal-check cal-check-yes">✓</div>
+        </div>
+
+        <div class="cal-row attended">
+          <div class="cal-time">11:30 AM</div>
+          <div class="cal-info">
+            <div class="cal-name">Lunch Outing — Teresa's Mexican Grill</div>
+            <div class="cal-loc">Meet in lobby</div>
+            <div style="display:flex;gap:5px;"><span class="tag tag-meal">Meal</span><span class="tag tag-social">Social</span></div>
+          </div>
+          <div class="cal-check cal-check-yes">✓</div>
+        </div>
+
+        <div class="cal-row">
+          <div class="cal-time">12:00 PM</div>
+          <div class="cal-info">
+            <div class="cal-name">Lunch</div>
+            <div class="cal-loc">4th Floor Dining Room</div>
+            <div><span class="tag tag-meal">Meal</span></div>
+          </div>
+          <div class="cal-check cal-check-no">○</div>
+        </div>
+
+        <div class="cal-row">
+          <div class="cal-time">1:00 PM</div>
+          <div class="cal-info">
+            <div class="cal-name">Fill Your Vase!</div>
+            <div class="cal-loc">4th Floor South Dining Room</div>
+            <div><span class="tag tag-creative">Creative</span></div>
+          </div>
+          <div class="cal-check cal-check-no">○</div>
+        </div>
+
+        <div class="cal-row highlighted attended">
+          <div class="cal-time">2:00 PM</div>
+          <div class="cal-info">
+            <div class="cal-name">Watercolor Painting ✨</div>
+            <div class="cal-loc">4th Floor Activity Room</div>
+            <div style="display:flex;gap:5px;"><span class="tag tag-creative">Creative</span><span class="tag tag-fav">⭐ Judy's Favorite</span></div>
+          </div>
+          <div class="cal-check cal-check-yes">✓</div>
+        </div>
+
+        <div class="cal-row">
+          <div class="cal-time">3:00 PM</div>
+          <div class="cal-info">
+            <div class="cal-name">Community Choir</div>
+            <div class="cal-loc">Wellbeing Studio</div>
+            <div><span class="tag tag-social">Social</span></div>
+          </div>
+          <div class="cal-check cal-check-no">○</div>
+        </div>
+
+        <div class="cal-row">
+          <div class="cal-time">5:00 PM</div>
+          <div class="cal-info">
+            <div class="cal-name">Dinner</div>
+            <div class="cal-loc">4th Floor Dining Room</div>
+            <div><span class="tag tag-meal">Meal</span></div>
+          </div>
+          <div class="cal-check cal-check-no">○</div>
+        </div>
+
+        <div class="cal-row">
+          <div class="cal-time">7:30 PM</div>
+          <div class="cal-info">
+            <div class="cal-name">Wind Down with Calm Connect</div>
+            <div class="cal-loc">4th Floor North Living Room</div>
+            <div><span class="tag tag-well">Wellness</span></div>
+          </div>
+          <div class="cal-check cal-check-no">○</div>
+        </div>
+
+      </div>
+    </div><!-- /screen-calendar -->
+
+
+    <!-- ══════════════════════
+         SCREEN 3: PROFILE
+         ══════════════════════ -->
+    <div class="screen" id="screen-profile">
+      <div class="s-body" style="padding-bottom: 24px;">
+        <div class="profile-hero">
+          <div class="profile-avatar">
+            <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="40" r="40" fill="#F4E8DC"/>
+              <ellipse cx="40" cy="63" rx="20" ry="15" fill="#D4A882"/>
+              <rect x="33" y="47" width="14" height="13" rx="3" fill="#E8C4A0"/>
+              <circle cx="40" cy="35" r="15" fill="#E8C4A0"/>
+              <ellipse cx="40" cy="21" rx="15" ry="9" fill="#E0DBD6"/>
+              <path d="M25 30 Q24 18 40 19 Q56 18 55 30" fill="#D0CBC6" opacity="0.85"/>
+              <circle cx="34" cy="35" r="2" fill="#5A4030"/>
+              <circle cx="46" cy="35" r="2" fill="#5A4030"/>
+              <path d="M33 43 Q40 47 47 43" stroke="#A07060" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="profile-name">Judy M.</div>
+          <div class="profile-room">Room 412 · 4th Floor</div>
+          <button class="edit-btn">✏️ Edit Profile</button>
+        </div>
+
+        <div class="p-section">
+          <div class="p-section-title">📖 Her Story</div>
+          <div class="story-block">
+            "Mom grew up in Minnesota and raised three kids. She was a self-taught watercolor painter — her work hung in our living room for as long as I can remember. She loved golf, playing cards with her friends on Thursday nights, and had a real mind for investing. She followed the stock market every morning with her coffee. She still lights up when she hears Patsy Cline."
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="p-section">
+          <div class="p-section-title">💛 Judy Loves</div>
+          <div class="loves-grid">
+            <div class="love-chip"><span class="love-ico">🎨</span><span class="love-lbl">Watercolor Painting</span></div>
+            <div class="love-chip"><span class="love-ico">⛳</span><span class="love-lbl">Golf</span></div>
+            <div class="love-chip"><span class="love-ico">🃏</span><span class="love-lbl">Card Games</span></div>
+            <div class="love-chip"><span class="love-ico">🎵</span><span class="love-lbl">Patsy Cline</span></div>
+            <div class="love-chip"><span class="love-ico">📈</span><span class="love-lbl">The Stock Market</span></div>
+            <div class="love-chip"><span class="love-ico">☕</span><span class="love-lbl">Morning Coffee</span></div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="p-section">
+          <div class="p-section-title">💬 Helpful to Know</div>
+          <ul class="helpful-list">
+            <li><span class="h-dot"></span><span>She can feel anxious in loud or unfamiliar situations.</span></li>
+            <li><span class="h-dot"></span><span>She responds well to one-on-one conversation and eye contact.</span></li>
+            <li><span class="h-dot"></span><span>She loves looking at family photos — they help her feel calm.</span></li>
+            <li><span class="h-dot"></span><span>Using her name when you greet her helps her feel at ease.</span></li>
+          </ul>
+        </div>
+
+        <div class="divider"></div>
+        <div class="p-section" style="padding-bottom: 18px;">
+          <div class="p-section-title">👨‍👩‍👧 Family</div>
+          <ul class="fam-list">
+            <li class="fam-item">
+              <div class="fam-avatar">👩</div>
+              <div><div class="fam-name">Sarah</div><div class="fam-role">Daughter · Primary contact</div></div>
+            </li>
+            <li class="fam-item">
+              <div class="fam-avatar">👦</div>
+              <div><div class="fam-name">Jake</div><div class="fam-role">Grandson · Age 5 — she lights up when she sees him</div></div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div><!-- /screen-profile -->
+
+
+    <!-- ══════════════════════
+         SCREEN 4: MOMENT DETAIL
+         ══════════════════════ -->
+    <div class="screen" id="screen-moment">
+      <div class="s-header">
+        <div class="s-header-row">
+          <button class="back-btn" onclick="goBack()">‹</button>
+          <div>
+            <div class="s-title">Watercolor Painting</div>
+            <div class="s-sub">Tuesday, May 13 · 2:00 PM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Large photo -->
+      <div class="moment-photo">
+        <svg viewBox="0 0 390 260" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <filter id="f2"><feDropShadow dx="1" dy="3" stdDeviation="3" flood-opacity="0.15"/></filter>
+            <radialGradient id="wg2" cx="75%" cy="25%" r="55%">
+              <stop offset="0%" stop-color="#FFF8D0" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#E8C890" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="vig2" cx="50%" cy="50%" r="70%">
+              <stop offset="55%" stop-color="transparent"/>
+              <stop offset="100%" stop-color="#B89060" stop-opacity="0.25"/>
+            </radialGradient>
+          </defs>
+          <!-- Warm room background -->
+          <rect width="390" height="260" fill="#EFE2CC"/>
+          <!-- Window light from right -->
+          <rect x="290" y="0" width="100" height="260" fill="#FFF8E8" opacity="0.5"/>
+          <!-- Table surface -->
+          <rect x="0" y="200" width="390" height="60" fill="#C8906A"/>
+          <rect x="0" y="196" width="390" height="10" rx="2" fill="#B07848"/>
+          <!-- Painting on table -->
+          <rect x="110" y="100" width="155" height="128" rx="4" fill="#FFFDF8" filter="url(#f2)"/>
+          <!-- Stems -->
+          <line x1="165" y1="210" x2="165" y2="172" stroke="#70A868" stroke-width="3"/>
+          <line x1="188" y1="210" x2="188" y2="170" stroke="#70A868" stroke-width="2.5"/>
+          <line x1="212" y1="210" x2="212" y2="168" stroke="#70A868" stroke-width="2.5"/>
+          <!-- Leaves -->
+          <ellipse cx="155" cy="193" rx="10" ry="5" fill="#82B870" transform="rotate(-22 155 193)" opacity="0.85"/>
+          <ellipse cx="178" cy="185" rx="9" ry="4.5" fill="#82B870" transform="rotate(20 178 185)" opacity="0.85"/>
+          <ellipse cx="224" cy="188" rx="9" ry="4.5" fill="#82B870" transform="rotate(-18 224 188)" opacity="0.85"/>
+          <!-- Pink flower (center) -->
+          <circle cx="165" cy="158" r="5.5" fill="#F5D040" opacity="0.95"/>
+          <circle cx="165" cy="146" r="7" fill="#F0A0B0" opacity="0.87"/>
+          <circle cx="155" cy="154" r="7" fill="#E890A0" opacity="0.87"/>
+          <circle cx="175" cy="154" r="7" fill="#E890A0" opacity="0.87"/>
+          <circle cx="157" cy="166" r="7" fill="#F0B0B8" opacity="0.87"/>
+          <circle cx="173" cy="166" r="7" fill="#F0B0B8" opacity="0.87"/>
+          <circle cx="165" cy="172" r="7" fill="#E890A0" opacity="0.87"/>
+          <!-- Blue flower (left) -->
+          <circle cx="130" cy="155" r="5" fill="#F5E040" opacity="0.9"/>
+          <circle cx="130" cy="145" r="6" fill="#90A8E8" opacity="0.83"/>
+          <circle cx="121" cy="152" r="6" fill="#90A8E8" opacity="0.83"/>
+          <circle cx="139" cy="152" r="6" fill="#90A8E8" opacity="0.83"/>
+          <circle cx="124" cy="163" r="6" fill="#A0B8F0" opacity="0.83"/>
+          <circle cx="136" cy="163" r="6" fill="#A0B8F0" opacity="0.83"/>
+          <circle cx="130" cy="168" r="6" fill="#90A8E8" opacity="0.83"/>
+          <line x1="130" y1="210" x2="130" y2="174" stroke="#70A868" stroke-width="2.5"/>
+          <!-- Orange flower (right) -->
+          <circle cx="212" cy="153" r="5" fill="#F5D040" opacity="0.9"/>
+          <circle cx="212" cy="143" r="6.5" fill="#F0A068" opacity="0.83"/>
+          <circle cx="202" cy="151" r="6.5" fill="#F0A068" opacity="0.83"/>
+          <circle cx="222" cy="151" r="6.5" fill="#E89060" opacity="0.83"/>
+          <circle cx="204" cy="162" r="6.5" fill="#F0B080" opacity="0.83"/>
+          <circle cx="220" cy="162" r="6.5" fill="#F0B080" opacity="0.83"/>
+          <circle cx="212" cy="167" r="6.5" fill="#F0A068" opacity="0.83"/>
+          <!-- Palette -->
+          <ellipse cx="315" cy="214" rx="35" ry="24" fill="#F0E8D8"/>
+          <ellipse cx="315" cy="214" rx="35" ry="24" fill="none" stroke="#C8A878" stroke-width="2"/>
+          <circle cx="298" cy="206" r="6" fill="#E87878" opacity="0.9"/>
+          <circle cx="312" cy="200" r="6" fill="#78A8E8" opacity="0.9"/>
+          <circle cx="327" cy="206" r="6" fill="#88C878" opacity="0.9"/>
+          <circle cx="304" cy="220" r="6" fill="#F8D060" opacity="0.9"/>
+          <circle cx="322" cy="220" r="6" fill="#D878C8" opacity="0.9"/>
+          <circle cx="315" cy="214" r="8" fill="#EDE0C8"/>
+          <!-- Paintbrush -->
+          <rect x="240" y="120" width="7" height="65" rx="3.5" fill="#C8906A" transform="rotate(18 244 155)"/>
+          <rect x="241" y="148" width="5" height="22" rx="2.5" fill="#5A8050" transform="rotate(18 244 155)" opacity="0.92"/>
+          <!-- Water cup -->
+          <rect x="60" y="202" width="32" height="24" rx="3" fill="#C8E8F0" opacity="0.88" stroke="#90C8E0" stroke-width="1.5"/>
+          <ellipse cx="76" cy="202" rx="16" ry="4" fill="#90C8E0" opacity="0.7"/>
+          <rect x="61" y="207" width="30" height="18" rx="2" fill="#A8D8F0" opacity="0.4"/>
+          <!-- Hands suggestion -->
+          <path d="M280 245 Q300 228 328 238 Q318 255 298 258 Z" fill="#E8C4A0" opacity="0.55"/>
+          <!-- Overlays -->
+          <rect width="390" height="260" fill="url(#wg2)"/>
+          <rect width="390" height="260" fill="url(#vig2)"/>
+        </svg>
+      </div>
+
+      <div class="s-body" style="padding: 18px 18px 24px;">
+        <div class="moment-meta">
+          <div class="moment-timestamp">🕐 2:47 PM · Care Staff</div>
+          <button class="heart-btn" id="heart-btn" onclick="toggleHeart()">
+            <span class="heart-ico" id="heart-ico">🤍</span>
+            <span id="heart-lbl">Love this</span>
+          </button>
+        </div>
+
+        <div class="moment-note">
+          "Judy stayed the whole session today — painting flowers, mixing colors until she got them just right. At one point she looked up and said, 'I used to do this at home.' One of those moments."
+        </div>
+        <div class="moment-by">👩‍⚕️ Maria, Care Staff · 4th Floor</div>
+        <div class="moment-divider"></div>
+        <div class="moment-prompt">Judy would love to hear from you 💌</div>
+        <button class="btn btn-sage" onclick="showScreen('send','moment')">
+          🎬 Send a Moment Back
+        </button>
+      </div>
+    </div><!-- /screen-moment -->
+
+
+    <!-- ══════════════════════
+         SCREEN 5: SEND
+         ══════════════════════ -->
+    <div class="screen" id="screen-send">
+      <div class="s-header">
+        <div class="s-header-row">
+          <button class="back-btn" onclick="goBack()">‹</button>
+          <div class="s-title">Send a Moment to Mom</div>
+        </div>
+      </div>
+
+      <!-- Form view -->
+      <div class="s-body" style="padding: 18px 18px 32px;" id="send-form">
+
+        <div class="media-toggle">
+          <button class="toggle-btn on" id="toggle-photo" onclick="setMedia('photo',this)">📷 Photo</button>
+          <button class="toggle-btn" id="toggle-video" onclick="setMedia('video',this)">🎬 Video</button>
+        </div>
+
+        <div class="capture-preview" id="capture-preview">
+          <div id="preview-hint">
+            <div class="preview-hint">
+              <div class="preview-hint-icon">📷</div>
+              Tap the button below to capture
+            </div>
+          </div>
+          <!-- Jake's kindergarten photo -->
+          <svg id="jake-photo" viewBox="0 0 320 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="jsky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#C8E8F8"/>
+                <stop offset="65%" stop-color="#F8E8C0"/>
+              </linearGradient>
+              <radialGradient id="jsun" cx="80%" cy="18%" r="35%">
+                <stop offset="0%" stop-color="#FFF5A0" stop-opacity="0.55"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </radialGradient>
+              <radialGradient id="jpv" cx="50%" cy="50%" r="70%">
+                <stop offset="55%" stop-color="transparent"/>
+                <stop offset="100%" stop-color="#C89050" stop-opacity="0.2"/>
+              </radialGradient>
+            </defs>
+            <!-- Sky -->
+            <rect width="320" height="190" fill="url(#jsky)"/>
+            <!-- Sun -->
+            <circle cx="265" cy="35" r="22" fill="#FDD84A" opacity="0.92"/>
+            <line x1="265" y1="7"  x2="265" y2="1"  stroke="#FDD84A" stroke-width="3" stroke-linecap="round"/>
+            <line x1="287" y1="14" x2="292" y2="10" stroke="#FDD84A" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="295" y1="35" x2="301" y2="35" stroke="#FDD84A" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="287" y1="56" x2="292" y2="60" stroke="#FDD84A" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="243" y1="14" x2="238" y2="10" stroke="#FDD84A" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- House wall -->
+            <rect x="72" y="58" width="176" height="132" fill="#EAD8C4"/>
+            <line x1="72"  y1="78"  x2="248" y2="78"  stroke="#DAC8B0" stroke-width="1"/>
+            <line x1="72"  y1="100" x2="248" y2="100" stroke="#DAC8B0" stroke-width="1"/>
+            <line x1="72"  y1="122" x2="248" y2="122" stroke="#DAC8B0" stroke-width="1"/>
+            <!-- Front door -->
+            <rect x="134" y="98" width="52" height="60" rx="3" fill="#5A3820"/>
+            <rect x="136" y="100" width="22" height="26" rx="2" fill="#7A5030"/>
+            <rect x="162" y="100" width="22" height="26" rx="2" fill="#7A5030"/>
+            <rect x="136" y="130" width="22" height="25" rx="2" fill="#7A5030"/>
+            <rect x="162" y="130" width="22" height="25" rx="2" fill="#7A5030"/>
+            <circle cx="160" cy="130" r="3.5" fill="#C8A050"/>
+            <!-- Path -->
+            <path d="M125 190 Q160 172 195 190" fill="#CEC0A8"/>
+            <!-- Bushes -->
+            <circle cx="95"  cy="160" r="18" fill="#6A9860"/>
+            <circle cx="84"  cy="164" r="14" fill="#5A8850"/>
+            <circle cx="107" cy="164" r="14" fill="#6A9860"/>
+            <circle cx="225" cy="160" r="18" fill="#6A9860"/>
+            <circle cx="214" cy="164" r="14" fill="#5A8850"/>
+            <circle cx="236" cy="164" r="14" fill="#6A9860"/>
+            <!-- Jake - small child with big backpack -->
+            <!-- Legs -->
+            <rect x="148" y="154" width="10" height="30" rx="5" fill="#4A90D8"/>
+            <rect x="162" y="154" width="10" height="30" rx="5" fill="#4A90D8"/>
+            <!-- Shoes -->
+            <ellipse cx="153" cy="184" rx="8" ry="5" fill="#2A3050"/>
+            <ellipse cx="167" cy="184" rx="8" ry="5" fill="#2A3050"/>
+            <!-- Body -->
+            <rect x="145" y="128" width="30" height="30" rx="6" fill="#F0A848"/>
+            <!-- Big backpack -->
+            <rect x="130" y="122" width="28" height="34" rx="5" fill="#4880C8"/>
+            <rect x="132" y="124" width="24" height="14" rx="3" fill="#5A90D8"/>
+            <rect x="132" y="142" width="24" height="10" rx="3" fill="#5A90D8"/>
+            <!-- Backpack straps -->
+            <path d="M132 122 Q128 112 132 104 Q144 102 145 115 Q141 120 142 128" stroke="#3870B8" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M158 122 Q162 112 158 104 Q146 102 145 115 Q149 120 148 128" stroke="#3870B8" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <!-- Head -->
+            <circle cx="160" cy="110" r="15" fill="#F0C898"/>
+            <!-- Hair -->
+            <ellipse cx="160" cy="97" rx="14" ry="7" fill="#8A5030"/>
+            <!-- Eyes -->
+            <circle cx="154" cy="109" r="2.5" fill="#3A2810"/>
+            <circle cx="166" cy="109" r="2.5" fill="#3A2810"/>
+            <!-- Big smile -->
+            <path d="M152 116 Q160 122 168 116" stroke="#B07050" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <!-- Overlays -->
+            <rect width="320" height="190" fill="url(#jsun)"/>
+            <rect width="320" height="190" fill="url(#jpv)"/>
+            <!-- Caption -->
+            <rect x="8" y="168" width="138" height="18" rx="4" fill="rgba(0,0,0,0.42)"/>
+            <text x="14" y="181" font-family="sans-serif" font-size="11" fill="white" font-weight="bold">Jake's first day 🎒</text>
+          </svg>
+        </div>
+
+        <div class="capture-row">
+          <button class="capture-btn" id="capture-btn" onclick="capturePhoto()">
+            <span id="cap-ico">📷</span>
+          </button>
+          <div class="capture-hint-txt" id="cap-hint">Tap to capture</div>
+        </div>
+
+        <div class="note-lbl">💬 Add a note</div>
+        <textarea class="note-field" rows="4" id="note-field">Hi Mom! Jake started kindergarten today — he was so brave. We're thinking about you. See you soon! Love, Sarah</textarea>
+
+        <div class="attach-note">📎 Photo will be attached automatically</div>
+
+        <button class="btn btn-peach" onclick="sendMoment()" style="margin-bottom: 12px;">
+          💌 Send to Mom
+        </button>
+
+        <div class="send-reassure">
+          <span style="font-size:16px;flex-shrink:0;">🤝</span>
+          <span>A staff member will share this with Judy at a good moment in her day.</span>
+        </div>
+
+      </div><!-- /send-form -->
+
+      <!-- Success view -->
+      <div class="send-success-view" id="send-success">
+        <div class="success-ico">💌</div>
+        <div class="success-title">Sent to Judy!</div>
+        <div class="success-txt">A care staff member will share your message with your mom at just the right moment in her day.</div>
+        <button class="btn btn-ghost" style="margin-top: 20px; width: auto; padding: 12px 24px;" onclick="showScreen('feed')">
+          Back to Judy's Day
+        </button>
+      </div>
+
+    </div><!-- /screen-send -->
+
+  </div><!-- /screens -->
+
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-feed"     onclick="showScreen('feed')">
+      <span class="nav-ico">🏠</span><span class="nav-lbl">Feed</span>
+    </button>
+    <button class="nav-btn" id="nav-calendar" onclick="showScreen('calendar')">
+      <span class="nav-ico">📅</span><span class="nav-lbl">Calendar</span>
+    </button>
+    <button class="nav-btn" id="nav-profile"  onclick="showScreen('profile')">
+      <span class="nav-ico">👤</span><span class="nav-lbl">Profile</span>
+    </button>
+    <button class="nav-btn" id="nav-send"     onclick="showScreen('send')">
+      <span class="nav-ico">💌</span><span class="nav-lbl">Send</span>
+    </button>
+  </nav>
+
+</div><!-- /app -->
+
+<script>
+let current = 'feed';
+let history = [];
+
+function showScreen(id, from) {
+  if (from) history.push(current);
+  else history = [];
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const s = document.getElementById('screen-' + id);
+  if (s) s.classList.add('active');
+  current = id;
+
+  document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+  const map = { feed:'nav-feed', calendar:'nav-calendar', profile:'nav-profile', send:'nav-send', moment:'nav-feed' };
+  const n = document.getElementById(map[id]);
+  if (n) n.classList.add('active');
+
+  if (id === 'send') {
+    document.getElementById('send-form').style.display = '';
+    document.getElementById('send-success').classList.remove('show');
+  }
+}
+
+function goBack() {
+  const prev = history.length ? history.pop() : 'feed';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const s = document.getElementById('screen-' + prev);
+  if (s) s.classList.add('active');
+  current = prev;
+  document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+  const map = { feed:'nav-feed', calendar:'nav-calendar', profile:'nav-profile', send:'nav-send', moment:'nav-feed' };
+  const n = document.getElementById(map[prev]);
+  if (n) n.classList.add('active');
+}
+
+function toggleHeart() {
+  const btn = document.getElementById('heart-btn');
+  const ico = document.getElementById('heart-ico');
+  const lbl = document.getElementById('heart-lbl');
+  const liked = btn.classList.toggle('liked');
+  ico.textContent = liked ? '❤️' : '🤍';
+  lbl.textContent = liked ? 'Loved!' : 'Love this';
+}
+
+function setMedia(type, el) {
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+let snapped = false;
+function capturePhoto() {
+  snapped = !snapped;
+  const btn = document.getElementById('capture-btn');
+  const ico = document.getElementById('cap-ico');
+  const hint = document.getElementById('cap-hint');
+  const preview = document.getElementById('capture-preview');
+  const hintEl = document.getElementById('preview-hint');
+  const photo = document.getElementById('jake-photo');
+
+  if (snapped) {
+    btn.classList.add('snapped');
+    ico.textContent = '✓';
+    hint.textContent = 'Tap to retake';
+    hintEl.style.display = 'none';
+    photo.style.display = 'block';
+    preview.classList.add('has-pic');
+  } else {
+    btn.classList.remove('snapped');
+    ico.textContent = '📷';
+    hint.textContent = 'Tap to capture';
+    hintEl.style.display = '';
+    photo.style.display = 'none';
+    preview.classList.remove('has-pic');
+  }
+}
+
+function sendMoment() {
+  document.getElementById('send-form').style.display = 'none';
+  document.getElementById('send-success').classList.add('show');
+  snapped = false;
+}
+</script>
+</body>
+</html>
