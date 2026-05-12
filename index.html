@@ -355,6 +355,9 @@ html, body { height: 100%; overflow: hidden; background: #DDD5CA; font-family: '
 .capture-btn:active { transform: scale(0.93); }
 .capture-btn.snapped { background: var(--sage); border-color: var(--sage-light); box-shadow: 0 4px 18px rgba(125,168,151,0.38); }
 .capture-hint-txt { font-size: 11px; color: var(--text-light); }
+.topic-chip { flex-shrink:0; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:500; border:1.5px solid var(--peach); background:var(--white); color:var(--peach); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.topic-chip.active { background:var(--peach); color:#fff; }
+#topic-chips::-webkit-scrollbar { display:none; }
 .note-lbl { font-size: 12px; font-weight: 700; color: var(--text-mid); margin-bottom: 7px; display: flex; align-items: center; gap: 5px; }
 .note-field {
   width: 100%; border: 1px solid var(--border); border-radius: var(--r);
@@ -976,6 +979,98 @@ html, body { height: 100%; overflow: hidden; background: #DDD5CA; font-family: '
 
     </div><!-- /screen-send -->
 
+    <!-- RESOURCES SCREEN -->
+    <div class="screen" id="screen-resources">
+      <div class="s-header">
+        <div class="s-header-row">
+          <div class="s-title">Resources</div>
+        </div>
+      </div>
+      <div class="s-body" style="padding:0 0 32px;">
+
+        <!-- Based on Today banner -->
+        <div style="background:var(--peach-bg);border-bottom:1px solid var(--peach-light);padding:14px 18px;">
+          <div style="font-size:12px;font-weight:700;color:var(--peach);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Based on Today</div>
+          <div style="font-size:13px;color:var(--text-mid);line-height:1.55;">
+            <strong style="color:var(--text-dark);">Judy had a harder afternoon.</strong> Today's notes mention paranoia and mood changes — these resources may help you understand what she's going through.
+          </div>
+        </div>
+
+        <!-- Suggested resources -->
+        <div style="padding:16px 18px 0;">
+
+          <div style="background:var(--white);border-radius:var(--r);box-shadow:var(--shadow-sm);display:flex;overflow:hidden;margin-bottom:10px;">
+            <div style="width:56px;flex-shrink:0;background:#4A9CC7;display:flex;align-items:center;justify-content:center;font-size:22px;">📄</div>
+            <div style="flex:1;padding:13px 14px;">
+              <div style="font-size:14px;font-weight:700;color:var(--text-dark);line-height:1.35;margin-bottom:4px;">Understanding Paranoia in Dementia: Why It Happens and How to Respond</div>
+              <div style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:7px;">Learn why paranoia is common in memory loss and gentle ways to de-escalate without arguing.</div>
+              <span style="font-size:12px;font-weight:700;color:var(--peach);">Read more →</span>
+            </div>
+          </div>
+
+          <div style="background:var(--white);border-radius:var(--r);box-shadow:var(--shadow-sm);display:flex;overflow:hidden;margin-bottom:10px;">
+            <div style="width:56px;flex-shrink:0;background:#5BAE6E;display:flex;align-items:center;justify-content:center;font-size:22px;">📞</div>
+            <div style="flex:1;padding:13px 14px;">
+              <div style="font-size:14px;font-weight:700;color:var(--text-dark);line-height:1.35;margin-bottom:4px;">Alzheimer's Association 24/7 Helpline</div>
+              <div style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:7px;">Free support for caregivers and families — any time, any day. Real people, not recordings. Call 800-272-3900.</div>
+              <span style="font-size:12px;font-weight:700;color:var(--peach);">Call now →</span>
+            </div>
+          </div>
+
+          <div style="background:var(--white);border-radius:var(--r);box-shadow:var(--shadow-sm);display:flex;overflow:hidden;margin-bottom:24px;">
+            <div style="width:56px;flex-shrink:0;background:#9B6DBF;display:flex;align-items:center;justify-content:center;font-size:22px;">👥</div>
+            <div style="flex:1;padding:13px 14px;">
+              <div style="font-size:14px;font-weight:700;color:var(--text-dark);line-height:1.35;margin-bottom:4px;">Caregiver Support Circle — Weekly Online Group</div>
+              <div style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:7px;">A safe space to share and be heard with others navigating the same journey. Free, virtual, every Thursday.</div>
+              <span style="font-size:12px;font-weight:700;color:var(--peach);">Learn more →</span>
+            </div>
+          </div>
+
+          <!-- Browse by topic -->
+          <div style="font-size:15px;font-weight:700;color:var(--text-dark);margin-bottom:10px;">Browse by Topic</div>
+          <div id="topic-chips" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;-ms-overflow-style:none;scrollbar-width:none;">
+            <button class="topic-chip active" onclick="filterTopic(this,'Paranoia')">Paranoia</button>
+            <button class="topic-chip" onclick="filterTopic(this,'Anxiety')">Anxiety</button>
+            <button class="topic-chip" onclick="filterTopic(this,'Sundowning')">Sundowning</button>
+            <button class="topic-chip" onclick="filterTopic(this,'Grief')">Grief</button>
+            <button class="topic-chip" onclick="filterTopic(this,'Sleep')">Sleep</button>
+            <button class="topic-chip" onclick="filterTopic(this,'Communication')">Communication</button>
+            <button class="topic-chip" onclick="filterTopic(this,'Wandering')">Wandering</button>
+            <button class="topic-chip" onclick="filterTopic(this,'Aggression')">Aggression</button>
+          </div>
+          <div id="topic-label" style="font-size:12px;color:var(--text-light);margin-bottom:12px;">Showing results for: <strong style="color:var(--text-mid);">Paranoia</strong></div>
+
+          <div id="topic-cards">
+            <div style="background:var(--white);border-radius:var(--r);box-shadow:var(--shadow-sm);display:flex;overflow:hidden;margin-bottom:10px;">
+              <div style="width:56px;flex-shrink:0;background:#D4A017;display:flex;align-items:center;justify-content:center;font-size:22px;">▶️</div>
+              <div style="flex:1;padding:13px 14px;">
+                <div style="font-size:14px;font-weight:700;color:var(--text-dark);line-height:1.35;margin-bottom:4px;">Teepa Snow: How to Handle Accusatory Behavior in Dementia</div>
+                <div style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:7px;">Expert dementia care educator explains what drives false accusations — and what actually helps.</div>
+                <span style="font-size:12px;font-weight:700;color:var(--peach);">Watch now →</span>
+              </div>
+            </div>
+            <div style="background:var(--white);border-radius:var(--r);box-shadow:var(--shadow-sm);display:flex;overflow:hidden;margin-bottom:10px;">
+              <div style="width:56px;flex-shrink:0;background:#4A9CC7;display:flex;align-items:center;justify-content:center;font-size:22px;">📄</div>
+              <div style="flex:1;padding:13px 14px;">
+                <div style="font-size:14px;font-weight:700;color:var(--text-dark);line-height:1.35;margin-bottom:4px;">When Your Loved One Thinks Someone Has Stolen From Them</div>
+                <div style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:7px;">Practical strategies from the Family Caregiver Alliance for one of dementia's most confusing symptoms.</div>
+                <span style="font-size:12px;font-weight:700;color:var(--peach);">Read more →</span>
+              </div>
+            </div>
+            <div style="background:var(--white);border-radius:var(--r);box-shadow:var(--shadow-sm);display:flex;overflow:hidden;margin-bottom:10px;">
+              <div style="width:56px;flex-shrink:0;background:#9B6DBF;display:flex;align-items:center;justify-content:center;font-size:22px;">👥</div>
+              <div style="flex:1;padding:13px 14px;">
+                <div style="font-size:14px;font-weight:700;color:var(--text-dark);line-height:1.35;margin-bottom:4px;">r/dementia — Online Caregiver Community</div>
+                <div style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:7px;">A compassionate peer community of families sharing real experiences. You are not alone in this.</div>
+                <span style="font-size:12px;font-weight:700;color:var(--peach);">Visit community →</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /screen-resources -->
+
   </div><!-- /screens -->
 
 
@@ -992,6 +1087,9 @@ html, body { height: 100%; overflow: hidden; background: #DDD5CA; font-family: '
     </button>
     <button class="nav-btn" id="nav-send"     onclick="showScreen('send')">
       <span class="nav-ico">💌</span><span class="nav-lbl">Send</span>
+    </button>
+    <button class="nav-btn" id="nav-resources" onclick="showScreen('resources')">
+      <span class="nav-ico">💛</span><span class="nav-lbl">Resources</span>
     </button>
   </nav>
 
@@ -1011,7 +1109,7 @@ function showScreen(id, from) {
   current = id;
 
   document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-  const map = { feed:'nav-feed', calendar:'nav-calendar', profile:'nav-profile', send:'nav-send', moment:'nav-feed' };
+  const map = { feed:'nav-feed', calendar:'nav-calendar', profile:'nav-profile', send:'nav-send', moment:'nav-feed', resources:'nav-resources' };
   const n = document.getElementById(map[id]);
   if (n) n.classList.add('active');
 
@@ -1028,7 +1126,7 @@ function goBack() {
   if (s) s.classList.add('active');
   current = prev;
   document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-  const map = { feed:'nav-feed', calendar:'nav-calendar', profile:'nav-profile', send:'nav-send', moment:'nav-feed' };
+  const map = { feed:'nav-feed', calendar:'nav-calendar', profile:'nav-profile', send:'nav-send', moment:'nav-feed', resources:'nav-resources' };
   const n = document.getElementById(map[prev]);
   if (n) n.classList.add('active');
 }
@@ -1103,6 +1201,65 @@ function sendMoment() {
   document.getElementById('send-form').style.display = 'none';
   document.getElementById('send-success').classList.add('show');
   snapped = false;
+}
+
+const topicResources = {
+  Paranoia: [
+    { color:'#D4A017', ico:'▶️', title:'Teepa Snow: How to Handle Accusatory Behavior in Dementia', desc:'Expert dementia care educator explains what drives false accusations — and what actually helps.', cta:'Watch now →' },
+    { color:'#4A9CC7', ico:'📄', title:'When Your Loved One Thinks Someone Has Stolen From Them', desc:'Practical strategies from the Family Caregiver Alliance for one of dementia\'s most confusing symptoms.', cta:'Read more →' },
+    { color:'#9B6DBF', ico:'👥', title:'r/dementia — Online Caregiver Community', desc:'A compassionate peer community of families sharing real experiences. You are not alone in this.', cta:'Visit community →' },
+  ],
+  Anxiety: [
+    { color:'#5BAE6E', ico:'📄', title:'Calming Techniques for Dementia-Related Anxiety', desc:'Simple, evidence-based approaches for reducing anxiety without medication — including music, touch, and routine.', cta:'Read more →' },
+    { color:'#4A9CC7', ico:'▶️', title:'How Routine Reduces Anxiety in Memory Care', desc:'Why predictability is one of the most powerful tools for families and staff alike.', cta:'Watch now →' },
+    { color:'#9B6DBF', ico:'📞', title:'Alzheimer's Association 24/7 Helpline', desc:'Free support any time of day. Real people, not recordings. Call 800-272-3900.', cta:'Call now →' },
+  ],
+  Sundowning: [
+    { color:'#D4A017', ico:'📄', title:'What Is Sundowning — and Why Does It Happen at Dusk?', desc:'A clear explanation of the late-afternoon confusion pattern common in memory care residents.', cta:'Read more →' },
+    { color:'#4A9CC7', ico:'▶️', title:'Sundowning Strategies That Actually Work', desc:'Practical tips from caregivers and clinicians on managing the most difficult hours of the day.', cta:'Watch now →' },
+    { color:'#5BAE6E', ico:'👥', title:'Caregiver Support Circle — Every Thursday', desc:'Connect with others navigating the same challenges. Free, virtual, no registration required.', cta:'Learn more →' },
+  ],
+  Grief: [
+    { color:'#9B6DBF', ico:'📄', title:'Ambiguous Loss: Grieving Someone Who Is Still Here', desc:'Understanding the unique grief of watching a loved one change with dementia — and why it\'s valid to feel it now.', cta:'Read more →' },
+    { color:'#5BAE6E', ico:'👥', title:'Grief Support Group for Dementia Families', desc:'A facilitated group for families experiencing anticipatory grief. Free and confidential.', cta:'Learn more →' },
+    { color:'#4A9CC7', ico:'📄', title:'Pauline Boss on Ambiguous Loss', desc:'Pioneering researcher explains why this kind of grief is so hard — and what helps.', cta:'Read more →' },
+  ],
+  Sleep: [
+    { color:'#4A9CC7', ico:'📄', title:'Why Dementia Disrupts Sleep — and What Helps', desc:'Sleep changes are common in memory care. Learn what\'s behind them and what families can do.', cta:'Read more →' },
+    { color:'#D4A017', ico:'▶️', title:'Non-Drug Approaches to Sleep in Memory Care', desc:'Evidence-based strategies including light therapy, activity timing, and evening routines.', cta:'Watch now →' },
+    { color:'#5BAE6E', ico:'📞', title:'Alzheimer's Association 24/7 Helpline', desc:'Free support any time, including nights when you can\'t sleep either. Call 800-272-3900.', cta:'Call now →' },
+  ],
+  Communication: [
+    { color:'#D4A017', ico:'▶️', title:'How to Talk to Someone With Dementia', desc:'Teepa Snow demonstrates techniques that reduce frustration and build connection — for families and staff.', cta:'Watch now →' },
+    { color:'#4A9CC7', ico:'📄', title:'When Words Stop Working: Non-Verbal Connection', desc:'How touch, eye contact, music, and presence become the primary language of connection.', cta:'Read more →' },
+    { color:'#9B6DBF', ico:'👥', title:'Family Communication Workshop — Monthly Online', desc:'Practice scenarios and guided discussion for families who want to feel more confident during visits.', cta:'Learn more →' },
+  ],
+  Wandering: [
+    { color:'#4A9CC7', ico:'📄', title:'Understanding Why People With Dementia Wander', desc:'Wandering is often purposeful — learn what drives it and how to respond safely and compassionately.', cta:'Read more →' },
+    { color:'#5BAE6E', ico:'📄', title:'MedicAlert + Alzheimer's Association Safe Return Program', desc:'A nationwide safety program for people with dementia who may wander. Free enrollment assistance available.', cta:'Learn more →' },
+    { color:'#D4A017', ico:'▶️', title:'Wandering Prevention Strategies for Memory Care Families', desc:'Practical tips from occupational therapists on reducing wandering risk without restricting freedom.', cta:'Watch now →' },
+  ],
+  Aggression: [
+    { color:'#D4A017', ico:'▶️', title:'Understanding Aggression in Dementia: It\'s Not Personal', desc:'Why aggression happens, what it communicates, and how to respond without escalating the situation.', cta:'Watch now →' },
+    { color:'#4A9CC7', ico:'📄', title:'De-escalation Techniques for Memory Care Families', desc:'Step-by-step guidance on staying calm and helping your loved one feel safe during a difficult moment.', cta:'Read more →' },
+    { color:'#9B6DBF', ico:'📞', title:'Alzheimer's Association 24/7 Helpline', desc:'If you\'re struggling after a difficult visit, you don\'t have to process it alone. Call 800-272-3900.', cta:'Call now →' },
+  ],
+};
+
+function filterTopic(el, topic) {
+  document.querySelectorAll('.topic-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('topic-label').innerHTML = 'Showing results for: <strong style="color:var(--text-mid);">' + topic + '</strong>';
+  const cards = topicResources[topic] || [];
+  document.getElementById('topic-cards').innerHTML = cards.map(r => `
+    <div style="background:var(--white);border-radius:var(--r);box-shadow:var(--shadow-sm);display:flex;overflow:hidden;margin-bottom:10px;">
+      <div style="width:56px;flex-shrink:0;background:${r.color};display:flex;align-items:center;justify-content:center;font-size:22px;">${r.ico}</div>
+      <div style="flex:1;padding:13px 14px;">
+        <div style="font-size:14px;font-weight:700;color:var(--text-dark);line-height:1.35;margin-bottom:4px;">${r.title}</div>
+        <div style="font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:7px;">${r.desc}</div>
+        <span style="font-size:12px;font-weight:700;color:var(--peach);">${r.cta}</span>
+      </div>
+    </div>`).join('');
 }
 </script>
 </body>
