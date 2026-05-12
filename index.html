@@ -342,6 +342,8 @@ html, body { height: 100%; overflow: hidden; background: #DDD5CA; font-family: '
 .preview-hint { font-size: 13px; color: var(--text-light); text-align: center; padding: 20px; }
 .preview-hint-icon { font-size: 30px; margin-bottom: 6px; }
 #jake-photo { display: none; width: 100%; height: 100%; position: absolute; inset: 0; }
+#camera-video { display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+#camera-canvas { display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
 .capture-row { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 18px; }
 .capture-btn {
   width: 68px; height: 68px; border-radius: 50%;
@@ -857,6 +859,8 @@ html, body { height: 100%; overflow: hidden; background: #DDD5CA; font-family: '
               Tap the button below to capture
             </div>
           </div>
+          <video id="camera-video" autoplay playsinline muted></video>
+          <canvas id="camera-canvas"></canvas>
           <!-- Jake's kindergarten photo -->
           <svg id="jake-photo" viewBox="0 0 320 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
             <defs>
@@ -1044,33 +1048,58 @@ function setMedia(type, el) {
 }
 
 let snapped = false;
-function capturePhoto() {
-  snapped = !snapped;
+let cameraStream = null;
+
+async function capturePhoto() {
   const btn = document.getElementById('capture-btn');
   const ico = document.getElementById('cap-ico');
   const hint = document.getElementById('cap-hint');
   const preview = document.getElementById('capture-preview');
   const hintEl = document.getElementById('preview-hint');
-  const photo = document.getElementById('jake-photo');
+  const video = document.getElementById('camera-video');
+  const canvas = document.getElementById('camera-canvas');
 
-  if (snapped) {
+  if (!snapped && !cameraStream) {
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+      video.srcObject = cameraStream;
+      video.style.display = 'block';
+      hintEl.style.display = 'none';
+      ico.textContent = '⬤';
+      hint.textContent = 'Tap to take photo';
+    } catch (e) {
+      hint.textContent = 'Camera not available';
+    }
+    return;
+  }
+
+  if (!snapped && cameraStream) {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    canvas.style.display = 'block';
+    video.style.display = 'none';
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+    snapped = true;
     btn.classList.add('snapped');
     ico.textContent = '✓';
     hint.textContent = 'Tap to retake';
-    hintEl.style.display = 'none';
-    photo.style.display = 'block';
     preview.classList.add('has-pic');
-  } else {
-    btn.classList.remove('snapped');
-    ico.textContent = '📷';
-    hint.textContent = 'Tap to capture';
-    hintEl.style.display = '';
-    photo.style.display = 'none';
-    preview.classList.remove('has-pic');
+    return;
   }
+
+  canvas.style.display = 'none';
+  snapped = false;
+  btn.classList.remove('snapped');
+  ico.textContent = '📷';
+  hint.textContent = 'Tap to open camera';
+  hintEl.style.display = '';
+  preview.classList.remove('has-pic');
 }
 
 function sendMoment() {
+  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
   document.getElementById('send-form').style.display = 'none';
   document.getElementById('send-success').classList.add('show');
   snapped = false;
